@@ -1,4 +1,4 @@
-export type VisionProviderName = "anthropic" | "openai";
+export type VisionProviderName = "anthropic" | "openai" | "google";
 
 export interface VisionConfig {
   provider: VisionProviderName;
