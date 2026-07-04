@@ -7,7 +7,7 @@ export function createOpenAIProvider(config: VisionConfig): VisionProvider {
   const baseUrl = "https://api.openai.com/v1/chat/completions";
 
   return {
-    async extract(base64, mediaType, tariffGroup): Promise<ExtractResult> {
+    async extract(base64, mediaType): Promise<ExtractResult> {
       const res = await fetch(baseUrl, {
         method: "POST",
         headers: {
@@ -25,7 +25,7 @@ export function createOpenAIProvider(config: VisionConfig): VisionProvider {
                   type: "image_url",
                   image_url: { url: `data:${mediaType};base64,${base64}` },
                 },
-                { type: "text", text: buildPrompt(tariffGroup) },
+                { type: "text", text: buildPrompt() },
               ],
             },
           ],

@@ -44,7 +44,6 @@ export default async function Dashboard({
                     key={meter.id}
                     id={meter.id}
                     name={meter.name}
-                    tariff={meter.tariff_group}
                     kw={Number(meter.approved_kw)}
                     last={last}
                     billsCount={bills.length}
@@ -78,14 +77,12 @@ function EmptyState() {
 function MeterRow({
   id,
   name,
-  tariff,
   kw,
   last,
   billsCount,
 }: {
   id: string;
   name: string;
-  tariff: "TG1" | "TG2";
   kw: number;
   last: { recorded_at: string; reading: number | null; vt: number | null; mt: number | null } | null;
   billsCount: number;
@@ -93,9 +90,7 @@ function MeterRow({
   const readingLabel =
     last == null
       ? "—"
-      : tariff === "TG1"
-      ? `${last.reading?.toFixed(2) ?? "?"} kWh`
-      : `VT ${last.vt?.toFixed(2) ?? "?"} · MT ${last.mt?.toFixed(2) ?? "?"}`;
+      : `VT ${last.vt?.toFixed(0) ?? "?"} · MT ${last.mt?.toFixed(0) ?? "?"}`;
   return (
     <Link
       href={`/meters/${id}`}
@@ -104,7 +99,7 @@ function MeterRow({
       <div className="flex items-baseline justify-between mb-1">
         <h3 className="text-sm font-bold text-[var(--fg-strong)]">{name}</h3>
         <span className="text-[10px] uppercase tracking-widest text-[var(--fg-dim)]">
-          {tariff} · {kw} kW
+          {kw} kW
         </span>
       </div>
       <div className="flex items-baseline justify-between text-xs">
@@ -138,20 +133,7 @@ function AddMeterForm() {
           className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--border-strong)] rounded text-[var(--fg-strong)] outline-none focus:border-[var(--accent-strong)]"
         />
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-[11px] uppercase tracking-widest text-[var(--fg-mute)] mb-1.5">
-            Vrsta
-          </label>
-          <select
-            name="tariff_group"
-            defaultValue="TG1"
-            className="w-full px-3 py-2 bg-[var(--bg)] border border-[var(--border-strong)] rounded text-[var(--fg-strong)] outline-none focus:border-[var(--accent-strong)]"
-          >
-            <option value="TG1">1.TG · jednotarifna</option>
-            <option value="TG2">2.TG · dvotarifna</option>
-          </select>
-        </div>
+      <div>
         <div>
           <label className="block text-[11px] uppercase tracking-widest text-[var(--fg-mute)] mb-1.5">
             Odobrena snaga (kW)

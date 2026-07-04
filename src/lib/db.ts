@@ -1,13 +1,11 @@
 import type { TariffRates } from "./tariff";
 import { createClient } from "./supabase/server";
 
-export type TariffGroup = "TG1" | "TG2";
-
 export interface Meter {
   id: string;
   user_id: string;
   name: string;
-  tariff_group: TariffGroup;
+  tariff_group: "TG2";
   approved_kw: number;
   notes: string | null;
   created_at: string;
@@ -54,13 +52,10 @@ export interface Bill {
   created_at: string;
 }
 
-// Flat row select — Supabase doesn't support nested aliases in `select`,
-// so we read flat columns then map to the nested TariffRates shape below.
 const TARIFF_RATES_COLUMNS =
   "id, effective_from, source_label, " +
   "mjerno_mjesto, obracunska_snaga, oie_rate, vat, " +
   "block_i, block_ii, " +
-  "tg1_i, tg1_ii, tg1_iii, " +
   "tg2_vt_i, tg2_vt_ii, tg2_vt_iii, " +
   "tg2_mt_i, tg2_mt_ii, tg2_mt_iii";
 
@@ -83,17 +78,12 @@ export async function fetchTariffRates(): Promise<TariffRates> {
     vat: Number(row.vat),
     blockI: Number(row.block_i),
     blockII: Number(row.block_ii),
-    tg1: {
-      i: Number(row.tg1_i),
-      ii: Number(row.tg1_ii),
-      iii: Number(row.tg1_iii),
-    },
-    tg2Vt: {
+    vt: {
       i: Number(row.tg2_vt_i),
       ii: Number(row.tg2_vt_ii),
       iii: Number(row.tg2_vt_iii),
     },
-    tg2Mt: {
+    mt: {
       i: Number(row.tg2_mt_i),
       ii: Number(row.tg2_mt_ii),
       iii: Number(row.tg2_mt_iii),

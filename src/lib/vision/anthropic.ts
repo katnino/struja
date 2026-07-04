@@ -7,7 +7,7 @@ export function createAnthropicProvider(config: VisionConfig): VisionProvider {
   const baseUrl = "https://api.anthropic.com/v1/messages";
 
   return {
-    async extract(base64, mediaType, tariffGroup): Promise<ExtractResult> {
+    async extract(base64, mediaType): Promise<ExtractResult> {
       const res = await fetch(baseUrl, {
         method: "POST",
         headers: {
@@ -26,7 +26,7 @@ export function createAnthropicProvider(config: VisionConfig): VisionProvider {
                   type: "image",
                   source: { type: "base64", media_type: mediaType, data: base64 },
                 },
-                { type: "text", text: buildPrompt(tariffGroup) },
+                { type: "text", text: buildPrompt() },
               ],
             },
           ],

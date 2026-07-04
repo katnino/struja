@@ -32,7 +32,7 @@ export default async function MeterDetailPage({
             {meter.name}
           </h2>
           <p className="text-[11px] text-[var(--fg-dim)] uppercase tracking-widest mt-1">
-            {meter.tariff_group} · {Number(meter.approved_kw)} kW
+            {Number(meter.approved_kw)} kW · dvotarifno
           </p>
         </div>
 
@@ -54,7 +54,7 @@ export default async function MeterDetailPage({
                 <li key={r.id} className="py-3 flex justify-between items-baseline">
                   <div>
                     <div className="text-sm text-[var(--fg-strong)]">
-                      {formatReading(r, meter.tariff_group)}
+                      {formatReading(r)}
                     </div>
                     <div className="text-[11px] text-[var(--fg-dim)] uppercase tracking-widest mt-0.5">
                       {r.source}

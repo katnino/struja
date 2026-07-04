@@ -14,9 +14,8 @@ export function createGoogleProvider(config: VisionConfig): VisionProvider {
   async function extract(
     base64: string,
     mediaType: string,
-    tariffGroup: "TG1" | "TG2",
   ): Promise<ExtractResult> {
-    const prompt = buildPrompt(tariffGroup);
+    const prompt = buildPrompt();
 
     const body = {
       contents: [
@@ -27,6 +26,10 @@ export function createGoogleProvider(config: VisionConfig): VisionProvider {
           ],
         },
       ],
+      generationConfig: {
+        temperature: 0,
+        response_mime_type: "application/json",
+      },
     };
 
     const url = `${GEMINI_API_BASE}/models/${model}:generateContent?key=${config.apiKey}`;
@@ -62,9 +65,9 @@ export function createGoogleProvider(config: VisionConfig): VisionProvider {
     try {
       const parsed = JSON.parse(cleaned) as ExtractResult;
       return {
-        reading: parsed.reading,
-        vt: parsed.vt,
-        mt: parsed.mt,
+        reading: parsed.reading != null ? Math.floor(parsed.reading) : undefined,
+        vt: parsed.vt != null ? Math.floor(parsed.vt) : undefined,
+        mt: parsed.mt != null ? Math.floor(parsed.mt) : undefined,
         confidence: parsed.confidence ?? "low",
         note: parsed.note,
       };

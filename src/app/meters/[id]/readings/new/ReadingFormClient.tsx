@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useCallback } from "react";
 import { createReadingAction } from "@/app/actions/readings";
-import { calculateBill, type BillResult, type TariffGroup, type TariffRates } from "@/lib/tariff";
+import { calculateBill, type BillResult, type TariffRates } from "@/lib/tariff";
 import { BillBreakdown } from "@/components/BillBreakdown";
 import { CameraCapture, type PhotoData } from "@/components/CameraCapture";
 import { ExtractedPreview } from "@/components/ExtractedPreview";
@@ -11,14 +11,12 @@ import type { ExtractResult } from "@/lib/vision/types";
 
 export function ReadingFormClient({
   meterId,
-  tariffGroup,
   prev,
   approvedKw,
   rates,
 }: {
   meterId: string;
-  tariffGroup: TariffGroup;
-  prev: { reading?: number; vt?: number; mt?: number };
+  prev: { vt?: number; mt?: number };
   approvedKw: number;
   rates: TariffRates;
 }) {
@@ -28,7 +26,6 @@ export function ReadingFormClient({
   const [inputMode, setInputMode] = useState<"manual" | "photo">("manual");
 
   // Manual / fallback values
-  const [reading, setReading] = useState("");
   const [vt, setVt] = useState("");
   const [mt, setMt] = useState("");
   const [recordedAt, setRecordedAt] = useState(today);
@@ -40,9 +37,7 @@ export function ReadingFormClient({
   const [extractResult, setExtractResult] = useState<ExtractResult | null>(null);
   const [extractError, setExtractError] = useState("");
 
-  // After extraction, the corrected values user wants to submit
   const [submitValues, setSubmitValues] = useState<{
-    reading?: number;
     vt?: number;
     mt?: number;
   }>({});
@@ -68,7 +63,6 @@ export function ReadingFormClient({
         body: JSON.stringify({
           imageBase64: photos[0].base64,
           mediaType: photos[0].mediaType,
-          tariffGroup,
         }),
       });
       if (!res.ok) {
@@ -78,7 +72,6 @@ export function ReadingFormClient({
       const result: ExtractResult = await res.json();
       setExtractResult(result);
       setSubmitValues({
-        reading: result.reading,
         vt: result.vt,
         mt: result.mt,
       });
@@ -90,7 +83,7 @@ export function ReadingFormClient({
   };
 
   const handleEditResult = useCallback(
-    (updated: { reading?: number; vt?: number; mt?: number }) => {
+    (updated: { vt?: number; mt?: number }) => {
       setSubmitValues(updated);
     },
     []
@@ -102,7 +95,6 @@ export function ReadingFormClient({
       await createReadingAction({
         meter_id: meterId,
         recorded_at: String(formData.get("recorded_at") ?? ""),
-        reading: submitValues.reading ?? parseOptional(formData.get("reading")),
         vt: submitValues.vt ?? parseOptional(formData.get("vt")),
         mt: submitValues.mt ?? parseOptional(formData.get("mt")),
         source: inputMode === "photo" ? "ai" : "manual",
@@ -113,22 +105,18 @@ export function ReadingFormClient({
   }
 
   const preview = useMemo<BillResult | null>(() => {
-    const currReading = inputMode === "photo"
-      ? submitValues.reading
-      : parseFloat(reading);
     const currVt = inputMode === "photo"
       ? submitValues.vt
       : parseFloat(vt);
     const currMt = inputMode === "photo"
       ? submitValues.mt
       : parseFloat(mt);
-    if (tariffGroup === "TG1") {
-      if (currReading == null || Number.isNaN(currReading)) return null;
-      return calculateBill("TG1", approvedKw, prev, { reading: currReading }, rates);
-    }
     if (currVt == null || currMt == null || Number.isNaN(currVt) || Number.isNaN(currMt)) return null;
-    return calculateBill("TG2", approvedKw, prev, { vt: currVt, mt: currMt }, rates);
-  }, [reading, vt, mt, inputMode, submitValues, prev, tariffGroup, approvedKw, rates]);
+    const consumptionVt = currVt - (prev.vt ?? 0);
+    const consumptionMt = currMt - (prev.mt ?? 0);
+    if (consumptionVt < 0 || consumptionMt < 0) return null;
+    return calculateBill(consumptionVt, consumptionMt, approvedKw, rates);
+  }, [vt, mt, inputMode, submitValues, prev, approvedKw, rates]);
 
   const style = {
     segmented: {
@@ -226,7 +214,6 @@ export function ReadingFormClient({
             {extractResult && (
               <ExtractedPreview
                 result={extractResult}
-                tariffGroup={tariffGroup}
                 onEdit={handleEditResult}
               />
             )}
@@ -235,59 +222,40 @@ export function ReadingFormClient({
 
         {/* ── MANUAL INPUT (visible in both modes as fallback if no photo) ── */}
         {(inputMode === "manual" || (inputMode === "photo" && !extractResult)) &&
-          (tariffGroup === "TG1" ? (
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[11px] uppercase tracking-widest text-[var(--fg-mute)] mb-1.5">
-                Trenutno stanje (kWh)
+              <label className="block text-[11px] uppercase tracking-widest text-[var(--warn)] mb-1.5">
+                VT – trenutno
               </label>
               <input
-                name="reading"
+                name="vt"
                 type="number"
                 inputMode="decimal"
-                step="0.01"
-                value={reading}
-                onChange={e => setReading(e.target.value)}
-                placeholder={prev.reading !== undefined ? `npr. ${(prev.reading + 200).toFixed(0)}` : "npr. 12500"}
+                step="1"
+                value={vt}
+                onChange={e => setVt(e.target.value)}
+                placeholder={prev.vt !== undefined ? `npr. ${(prev.vt + 200).toFixed(0)}` : "VT"}
                 required
                 className="w-full px-3 py-3 bg-[var(--bg)] border border-[var(--border-strong)] rounded text-[var(--fg-strong)] text-base outline-none focus:border-[var(--accent-strong)]"
               />
             </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[11px] uppercase tracking-widest text-[var(--warn)] mb-1.5">
-                  VT – trenutno
-                </label>
-                <input
-                  name="vt"
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  value={vt}
-                  onChange={e => setVt(e.target.value)}
-                  placeholder="VT"
-                  required
-                  className="w-full px-3 py-3 bg-[var(--bg)] border border-[var(--border-strong)] rounded text-[var(--fg-strong)] text-base outline-none focus:border-[var(--accent-strong)]"
-                />
-              </div>
-              <div>
-                <label className="block text-[11px] uppercase tracking-widest text-[var(--info)] mb-1.5">
-                  MT – trenutno
-                </label>
-                <input
-                  name="mt"
-                  type="number"
-                  inputMode="decimal"
-                  step="0.01"
-                  value={mt}
-                  onChange={e => setMt(e.target.value)}
-                  placeholder="MT"
-                  required
-                  className="w-full px-3 py-3 bg-[var(--bg)] border border-[var(--border-strong)] rounded text-[var(--fg-strong)] text-base outline-none focus:border-[var(--accent-strong)]"
-                />
-              </div>
+            <div>
+              <label className="block text-[11px] uppercase tracking-widest text-[var(--info)] mb-1.5">
+                MT – trenutno
+              </label>
+              <input
+                name="mt"
+                type="number"
+                inputMode="decimal"
+                step="1"
+                value={mt}
+                onChange={e => setMt(e.target.value)}
+                placeholder={prev.mt !== undefined ? `npr. ${(prev.mt + 200).toFixed(0)}` : "MT"}
+                required
+                className="w-full px-3 py-3 bg-[var(--bg)] border border-[var(--border-strong)] rounded text-[var(--fg-strong)] text-base outline-none focus:border-[var(--accent-strong)]"
+              />
             </div>
-          ))
+          </div>
         }
 
         <div>

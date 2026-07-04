@@ -102,7 +102,7 @@ create table if not exists public.bills (
   total               numeric(10,2) not null,
   blocks              jsonb not null,
   created_at          timestamptz default now(),
-  constraint bill_period check (period_end > period_start)
+  constraint bill_period check (period_end >= period_start)
 );
 create index if not exists idx_bills_meter on public.bills(meter_id, period_end desc);
 

@@ -18,12 +18,26 @@ export interface VisionProvider {
   extract(
     base64: string,
     mediaType: string,
-    tariffGroup: "TG1" | "TG2"
   ): Promise<ExtractResult>;
 }
 
-export function buildPrompt(tariffGroup: "TG1" | "TG2"): string {
-  return tariffGroup === "TG1"
-    ? `This is a photo of a single-tariff (jednotarifna) electricity meter. Extract the main kWh reading shown on the display or dial. Return ONLY a JSON object like: {"reading": 12345.6, "confidence": "high", "note": "optional note"}. If you cannot read it clearly, set confidence to "low" and explain in note.`
-    : `This is a photo of a dual-tariff (dvotarifna) electricity meter. Extract both readings: VT (Viša tarifa / peak) and MT (Manja tarifa / off-peak). Return ONLY a JSON object like: {"vt": 8234.5, "mt": 5123.1, "confidence": "high", "note": "optional note"}. If you cannot read clearly, set confidence to "low".`;
+export function buildPrompt(): string {
+  return `You are looking at a dual-tariff (dvotarifna) electricity meter.
+
+LAYOUT — Two rows of digit wheels, one below the other, with "kWh" written between them:
+
+  TOP ROW    = VT (Viša tarifa / peak)
+  BOTTOM ROW = MT (Manja tarifa / off-peak)
+
+Each row has 6 digit wheels:
+  • 5 white/black main digits (the actual meter reading)
+  • 1 red decimal digit slightly spaced to the right — IGNORE THIS
+
+Extract ONLY the 5 main digits from each row as whole numbers (e.g. 82345, NOT 82345.6).
+
+IGNORE all numbers below the rotating disc / impulse wheel (those are serial numbers, specs, model info — not meter readings).
+
+Return JSON:
+{"vt": 82345, "mt": 52341, "confidence": "high", "note": "optional note"}
+If unclear, set confidence to "low" and explain which number was ambiguous.`;
 }

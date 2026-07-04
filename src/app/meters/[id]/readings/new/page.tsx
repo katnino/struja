@@ -22,11 +22,10 @@ export default async function NewReadingPage({
 
   const prevValues = prevReading
     ? {
-        reading: prevReading.reading ?? undefined,
         vt: prevReading.vt ?? undefined,
         mt: prevReading.mt ?? undefined,
       }
-    : { reading: undefined, vt: undefined, mt: undefined };
+    : { vt: undefined, mt: undefined };
 
   return (
     <>
@@ -43,7 +42,7 @@ export default async function NewReadingPage({
             ⚡ Novo očitanje
           </h2>
           <p className="text-[11px] text-[var(--fg-dim)] uppercase tracking-widest mt-1">
-            {meter.name} · {meter.tariff_group} · {Number(meter.approved_kw)} kW
+            {meter.name} · {Number(meter.approved_kw)} kW
           </p>
         </div>
 
@@ -53,7 +52,7 @@ export default async function NewReadingPage({
               Prethodno stanje ({prevReading.recorded_at}):
             </span>
             <span className="text-[var(--fg-strong)]">
-              {formatReading(prevReading, meter.tariff_group)}
+              {formatReading(prevReading)}
             </span>
           </div>
         ) : (
@@ -66,7 +65,6 @@ export default async function NewReadingPage({
         <Suspense fallback={null}>
           <ReadingFormClient
             meterId={meter.id}
-            tariffGroup={meter.tariff_group}
             prev={prevValues}
             approvedKw={Number(meter.approved_kw)}
             rates={rates}

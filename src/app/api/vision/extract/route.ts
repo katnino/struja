@@ -13,18 +13,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { imageBase64?: string; mediaType?: string; tariffGroup?: "TG1" | "TG2" };
+  let body: { imageBase64?: string; mediaType?: string };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { imageBase64, mediaType, tariffGroup } = body;
+  const { imageBase64, mediaType } = body;
 
-  if (!imageBase64 || !mediaType || !tariffGroup) {
+  if (!imageBase64 || !mediaType) {
     return NextResponse.json(
-      { error: "Missing required fields: imageBase64, mediaType, tariffGroup" },
+      { error: "Missing required fields: imageBase64, mediaType" },
       { status: 400 }
     );
   }
@@ -50,7 +50,6 @@ export async function POST(request: Request) {
     const result: ExtractResult = await provider.extract(
       imageBase64,
       mediaType,
-      tariffGroup
     );
 
     return NextResponse.json(result);
