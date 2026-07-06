@@ -3,13 +3,15 @@
 Informativni obračun struje za Elektroprivreda Republike Srpske (ERS) po
 REERS blok tarifi (Odluka 15.12.2022, primjena od 01.01.2023.).
 
-User flow:
+Postupak:
 
-1. Sign up / sign in (Supabase Auth)
+1. Prijavi se / sign in (Supabase Auth)
 2. Dodaj jedno ili više brojila
 3. Svaki mjesec unesi novo očitanje — diff naspram prethodnog stanja
    automatski računa potrošnju i izdaje račun
-4. Pregled historije računa po brojilu
+4. Pregled istorije računa po brojilu
+
+Potrošnju je moguće pratiti bilo kad, ne samo jedanput mjesečno.
 
 ## Stack
 
@@ -41,7 +43,7 @@ supabase/migrations/
   0002_user_settings.sql  User API keys table
 ```
 
-## Setup lokalno
+## Lokalni setup
 
 1. **Kreiraj Supabase projekat** na https://supabase.com/dashboard
 2. **Pokreni migracije** u Supabase SQL Editor (redom):
@@ -64,9 +66,3 @@ supabase/migrations/
 
 Bilo koja Next.js platforma: Vercel (preporučeno), Railway, Fly.io.
 Env varijable se postavljaju u platform dashboardu.
-
-## TODO
-
-- Email/push podsjetnik za mjesečno očitanje
-- Multi-meter households / dijeljenje računa
-- Admin panel za ažuriranje `tariff_rates` kad REERS objavi nove cifre
