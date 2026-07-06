@@ -1,6 +1,6 @@
 # Struja
 
-Informativni obračun struje za Elektroprivreda Republike Srpske (ERS) po
+Aplikacija za individualni obračun struje, slikanjem mjerila, za potrošače Elektroprivrede Republike Srpske (ERS) po
 REERS blok tarifi (Odluka 15.12.2022, primjena od 01.01.2023.).
 
 Postupak:
