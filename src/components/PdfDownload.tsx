@@ -39,20 +39,6 @@ export function PdfDownload({
     const margin = 10;
     let y = margin;
 
-    const title = (text: string, size: number) => {
-      pdf.setFontSize(size);
-      pdf.text(text, margin, y);
-      y += size * 0.5;
-    };
-
-    const subtitle = (text: string) => {
-      pdf.setFontSize(9);
-      pdf.setTextColor(100);
-      pdf.text(text, margin, y);
-      y += 5;
-      pdf.setTextColor(0);
-    };
-
     const line = () => {
       y += 2;
       pdf.setDrawColor(200);

@@ -6,6 +6,7 @@ import { calculateBill, type BillResult, type TariffRates } from "@/lib/tariff";
 import { BillBreakdown } from "@/components/BillBreakdown";
 import { CameraCapture, type PhotoData } from "@/components/CameraCapture";
 import { ExtractedPreview } from "@/components/ExtractedPreview";
+import { ApiKeyModal } from "@/components/ApiKeyModal";
 import { useSearchParams } from "next/navigation";
 import type { ExtractResult } from "@/lib/vision/types";
 
@@ -36,6 +37,7 @@ export function ReadingFormClient({
   const [extracting, setExtracting] = useState(false);
   const [extractResult, setExtractResult] = useState<ExtractResult | null>(null);
   const [extractError, setExtractError] = useState("");
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
 
   const [submitValues, setSubmitValues] = useState<{
     vt?: number;
@@ -67,6 +69,10 @@ export function ReadingFormClient({
       });
       if (!res.ok) {
         const err = await res.json();
+        if (res.status === 403 && err.error === "NO_API_KEY") {
+          setShowApiKeyModal(true);
+          return;
+        }
         throw new Error(err.error ?? "Extraction failed");
       }
       const result: ExtractResult = await res.json();
@@ -295,6 +301,17 @@ export function ReadingFormClient({
           {pending ? "Spremam…" : "Spremi očitanje (i račun)"}
         </button>
       </form>
+
+      {showApiKeyModal && (
+        <ApiKeyModal
+          onClose={() => setShowApiKeyModal(false)}
+          onSaved={() => {
+            setShowApiKeyModal(false);
+            // Retry extraction after saving key
+            handleExtract();
+          }}
+        />
+      )}
     </div>
   );
 }

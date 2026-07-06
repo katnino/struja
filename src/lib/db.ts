@@ -163,3 +163,25 @@ export async function getAuthUser() {
   const { data } = await supabase.auth.getUser();
   return data.user;
 }
+
+export async function fetchUserApiKey(userId: string): Promise<string | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("user_settings")
+    .select("ai_api_key")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return (data?.ai_api_key as string | null) ?? null;
+}
+
+export async function saveUserApiKey(
+  userId: string,
+  key: string,
+): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("user_settings").upsert(
+    { user_id: userId, ai_api_key: key, updated_at: new Date().toISOString() },
+    { onConflict: "user_id" },
+  );
+  if (error) throw new Error(error.message);
+}

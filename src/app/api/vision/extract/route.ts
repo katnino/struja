@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { createProviderFromEnv } from "@/lib/vision/provider";
-import { getAuthUser } from "@/lib/db";
+import { createVisionProvider } from "@/lib/vision/provider";
+import { getAuthUser, fetchUserApiKey } from "@/lib/db";
 import type { ExtractResult } from "@/lib/vision/types";
 
 // Validate file size (5 MB max)
@@ -11,6 +11,15 @@ export async function POST(request: Request) {
   const user = await getAuthUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Fetch user's own API key
+  const apiKey = await fetchUserApiKey(user.id);
+  if (!apiKey) {
+    return NextResponse.json(
+      { error: "NO_API_KEY", message: "Unesite svoj besplatni Gemini API ključ u postavkama." },
+      { status: 403 }
+    );
   }
 
   let body: { imageBase64?: string; mediaType?: string };
@@ -46,7 +55,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const provider = createProviderFromEnv();
+    const provider = createVisionProvider({ provider: "google", apiKey });
     const result: ExtractResult = await provider.extract(
       imageBase64,
       mediaType,

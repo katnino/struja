@@ -17,19 +17,3 @@ export function createVisionProvider(config: VisionConfig): VisionProvider {
     }
   }
 }
-
-/**
- * Create a VisionProvider from environment variables.
- * Expects VISION_PROVIDER and VISION_API_KEY.
- */
-export function createProviderFromEnv(): VisionProvider {
-  const provider = (process.env.VISION_PROVIDER ?? "google") as VisionConfig["provider"];
-  const apiKey = process.env.VISION_API_KEY ?? "";
-  if (!apiKey) {
-    throw new Error(
-      "VISION_API_KEY is not set in .env.local. " +
-      "Get a free Gemini key from https://aistudio.google.com/apikey"
-    );
-  }
-  return createVisionProvider({ provider, apiKey });
-}
