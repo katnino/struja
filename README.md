@@ -7,8 +7,7 @@ Postupak:
 
 1. Prijavi se / sign in (Supabase Auth)
 2. Dodaj jedno ili više brojila
-3. Svaki mjesec unesi novo očitanje — diff naspram prethodnog stanja
-   automatski računa potrošnju i izdaje račun
+3. Svaki mjesec unesi novo očitanje (sliku) i aplikacija automatski računa potrošnju i izdaje račun naspram predhodnog stanja.
 4. Pregled istorije računa po brojilu
 
 Potrošnju je moguće pratiti bilo kad, ne samo jedanput mjesečno.
