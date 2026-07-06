@@ -10,7 +10,7 @@ export default async function Header() {
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl">⚡</span>
           <span className="font-bold tracking-wider text-[var(--fg-strong)]">
-            ERS Kalkulator
+            Struja
           </span>
         </Link>
         {user ? (

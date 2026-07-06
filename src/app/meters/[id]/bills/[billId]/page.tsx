@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import { fetchBill, fetchMeter } from "@/lib/db";
 import { BillBreakdown } from "@/components/BillBreakdown";
+import { PdfDownload } from "@/components/PdfDownload";
 
 export default async function BillDetailPage({
   params,
@@ -32,9 +33,12 @@ export default async function BillDetailPage({
           </p>
         </div>
 
-        <BillBreakdown
+        <PdfDownload
+          meterName={meter.name}
+          periodStart={bill.period_start}
+          periodEnd={bill.period_end}
           blocks={bill.blocks}
-          approved_kw={Number(bill.approved_kw)}
+          approvedKw={Number(bill.approved_kw)}
           mjernoMjesto={Number(bill.mjerno_mjesto)}
           obracunskaSnaga={Number(bill.obracunska_snaga)}
           totalEnergy={Number(bill.energy_cost)}
@@ -44,6 +48,21 @@ export default async function BillDetailPage({
           total={Number(bill.total)}
           consumptionKwh={Number(bill.consumption_kwh)}
         />
+
+        <div className="mt-4">
+          <BillBreakdown
+            blocks={bill.blocks}
+            approved_kw={Number(bill.approved_kw)}
+            mjernoMjesto={Number(bill.mjerno_mjesto)}
+            obracunskaSnaga={Number(bill.obracunska_snaga)}
+            totalEnergy={Number(bill.energy_cost)}
+            totalOie={Number(bill.oie_cost)}
+            subtotal={Number(bill.subtotal)}
+            vatAmount={Number(bill.vat_amount)}
+            total={Number(bill.total)}
+            consumptionKwh={Number(bill.consumption_kwh)}
+          />
+        </div>
 
         <div className="mt-6 text-[10px] text-[var(--fg-faint)] tracking-wider">
           REERS odluka 15.12.2022 · primjena od 01.01.2023. · informativni obračun

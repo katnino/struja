@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ERS Kalkulator",
-  description: "Elektroprivreda Republike Srpske - blok tarife, REERS 2023",
+  title: "Struja",
+  description: "Praćenje potrošnje električne energije - blok tarife, REERS 2023",
 };
 
 export default function RootLayout({

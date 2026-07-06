@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { signInAction } from "@/app/actions/auth";
 
-export const metadata = { title: "Prijava – ERS Kalkulator" };
+export const metadata = { title: "Prijava – Struja" };
 
 export default async function LoginPage({
   searchParams,
@@ -17,7 +17,7 @@ export default async function LoginPage({
         <div className="text-center mb-8">
           <div className="text-3xl mb-2">⚡</div>
           <h1 className="text-xl font-bold tracking-wider text-[var(--fg-strong)]">
-            ERS Kalkulator
+            Struja
           </h1>
           <p className="text-xs text-[var(--fg-dim)] mt-1 uppercase tracking-widest">
             Prijava

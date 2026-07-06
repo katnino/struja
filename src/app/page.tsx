@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import { fetchMeters, fetchLatestReading, fetchBills } from "@/lib/db";
 import { createMeterAction } from "@/app/actions/meters";
 
-export const metadata = { title: "Pregled – ERS Kalkulator" };
+export const metadata = { title: "Pregled – Struja" };
 
 export default async function Dashboard({
   searchParams,
