@@ -6,6 +6,13 @@ import { createClient } from "@/lib/supabase/server";
 import { getAuthUser, fetchMeter, fetchLatestReading, fetchTariffRates } from "@/lib/db";
 import { calculateBill } from "@/lib/tariff";
 
+function friendlyError(msg: string): string {
+  if (msg.includes("duplicate key")) return "Ovaj podatak već postoji.";
+  if (msg.includes("violates row-level security")) return "Nemate dozvolu za ovu operaciju.";
+  if (msg.includes("foreign key constraint")) return "Povezani podatak ne postoji.";
+  return msg;
+}
+
 function fail(meterId: string, error: string): never {
   const params = new URLSearchParams({ error });
   redirect(`/meters/${meterId}/readings/new?${params.toString()}`);
@@ -25,7 +32,25 @@ export async function createReadingAction(input: NewReadingInput) {
 
   const meter = await fetchMeter(input.meter_id);
   if (!meter) fail(input.meter_id, "Brojilo ne postoji.");
-  if (meter.user_id !== user!.id) fail(input.meter_id, "Nemate pristup ovom brojilu.");
+  if (meter.user_id !== user.id) fail(input.meter_id, "Nemate pristup ovom brojilu.");
+
+  if (input.vt === undefined || input.mt === undefined ||
+      !Number.isFinite(input.vt) || !Number.isFinite(input.mt)) {
+    fail(input.meter_id, "Unesite VT i MT očitavanje.");
+  }
+  if (input.vt! < 0 || input.mt! < 0) {
+    fail(input.meter_id, "Očitanje ne može biti negativno.");
+  }
+
+  const recordedAt = new Date(input.recorded_at);
+  if (isNaN(recordedAt.getTime())) {
+    fail(input.meter_id, "Datum nije ispravan.");
+  }
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  if (recordedAt > today) {
+    fail(input.meter_id, "Datum ne može biti u budućnosti.");
+  }
 
   const rates = await fetchTariffRates();
   const prev = await fetchLatestReading(input.meter_id);
@@ -33,10 +58,6 @@ export async function createReadingAction(input: NewReadingInput) {
   const prevVt = prev?.vt ?? undefined;
   const prevMt = prev?.mt ?? undefined;
 
-  if (input.vt === undefined || input.mt === undefined ||
-      !Number.isFinite(input.vt) || !Number.isFinite(input.mt)) {
-    fail(input.meter_id, "Unesite VT i MT očitavanje.");
-  }
   if (prevVt !== undefined && input.vt! < prevVt) {
     fail(input.meter_id, "Trenutno VT stanje ne može biti manje od prethodnog.");
   }
@@ -49,8 +70,8 @@ export async function createReadingAction(input: NewReadingInput) {
   const { data: readingRow, error: readingErr } = await supabase
     .from("readings")
     .insert({
-      meter_id: meter!.id,
-      user_id: user!.id,
+      meter_id: meter.id,
+      user_id: user.id,
       recorded_at: input.recorded_at,
       vt: input.vt,
       mt: input.mt,
@@ -58,7 +79,7 @@ export async function createReadingAction(input: NewReadingInput) {
     })
     .select("id")
     .single();
-  if (readingErr || !readingRow) fail(input.meter_id, `Spremanje očitanja neuspješno: ${readingErr?.message ?? ""}`);
+  if (readingErr || !readingRow) fail(input.meter_id, `Spremanje očitanja neuspješno: ${friendlyError(readingErr?.message ?? "")}`);
 
   if (prev) {
     const consumptionVt = input.vt! - (prevVt ?? 0);
@@ -66,19 +87,19 @@ export async function createReadingAction(input: NewReadingInput) {
     const result = calculateBill(
       consumptionVt,
       consumptionMt,
-      Number(meter!.approved_kw),
+      Number(meter.approved_kw),
       rates
     );
 
     const { error: billErr } = await supabase.from("bills").insert({
-      meter_id: meter!.id,
-      user_id: user!.id,
+      meter_id: meter.id,
+      user_id: user.id,
       period_start: prev.recorded_at,
       period_end: input.recorded_at,
       prev_reading_id: prev.id,
       curr_reading_id: readingRow!.id,
       tariff_rates_id: 1,
-      approved_kw: meter!.approved_kw,
+      approved_kw: meter.approved_kw,
       consumption_kwh: result.consumptionKwh,
       mjerno_mjesto: result.mjernoMjesto,
       obracunska_snaga: result.obracunskaSnaga,
@@ -89,9 +110,9 @@ export async function createReadingAction(input: NewReadingInput) {
       total: result.total,
       blocks: result.blocks,
     });
-    if (billErr) fail(input.meter_id, `Spremanje računa neuspješno: ${billErr.message}`);
+    if (billErr) fail(input.meter_id, `Spremanje računa neuspješno: ${friendlyError(billErr.message)}`);
   }
 
-  revalidatePath(`/meters/${meter!.id}`);
-  redirect(`/meters/${meter!.id}`);
+  revalidatePath(`/meters/${meter.id}`);
+  redirect(`/meters/${meter.id}`);
 }

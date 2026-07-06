@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { signOutAction } from "@/app/actions/auth";
 import { getAuthUser } from "@/lib/db";
+import { HeaderSettings } from "./HeaderSettings";
 
 export default async function Header() {
   const user = await getAuthUser();
@@ -18,6 +19,7 @@ export default async function Header() {
             <span className="text-xs text-[var(--fg-mute)] hidden sm:inline">
               {user.email}
             </span>
+            <HeaderSettings />
             <form action={signOutAction}>
               <button
                 type="submit"

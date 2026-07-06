@@ -15,11 +15,13 @@ export function ReadingFormClient({
   prev,
   approvedKw,
   rates,
+  hasPrev,
 }: {
   meterId: string;
   prev: { vt?: number; mt?: number };
   approvedKw: number;
   rates: TariffRates;
+  hasPrev: boolean;
 }) {
   const today = new Date().toISOString().slice(0, 10);
 
@@ -273,6 +275,7 @@ export function ReadingFormClient({
             type="date"
             value={recordedAt}
             onChange={e => setRecordedAt(e.target.value)}
+            max={today}
             required
             className="w-full px-3 py-2.5 bg-[var(--bg)] border border-[var(--border-strong)] rounded text-[var(--fg-strong)] outline-none focus:border-[var(--accent-strong)]"
           />
@@ -298,7 +301,11 @@ export function ReadingFormClient({
           disabled={pending}
           className="w-full py-3 rounded bg-[var(--accent)] hover:opacity-90 disabled:opacity-50 text-white uppercase tracking-widest text-xs font-bold cursor-pointer"
         >
-          {pending ? "Spremam…" : "Spremi očitanje (i račun)"}
+          {pending
+            ? "Spremam…"
+            : hasPrev
+              ? "Spremi očitanje (i račun)"
+              : "Spremi prvo očitanje"}
         </button>
       </form>
 

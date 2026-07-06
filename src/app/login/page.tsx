@@ -6,11 +6,12 @@ export const metadata = { title: "Prijava – Struja" };
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string; error?: string }>;
+  searchParams: Promise<{ next?: string; error?: string; message?: string }>;
 }) {
   const params = await searchParams;
   const next = params?.next ?? "/";
   const error = params?.error;
+  const message = params?.message;
   return (
     <main className="min-h-screen px-4 py-10">
       <div className="max-w-sm mx-auto">
@@ -31,6 +32,11 @@ export default async function LoginPage({
           {error && (
             <div className="text-sm text-[var(--danger)] bg-[color:color-mix(in_srgb,var(--danger)_15%,transparent)] border border-[color:color-mix(in_srgb,var(--danger)_40%,transparent)] rounded p-3">
               {error}
+            </div>
+          )}
+          {message && (
+            <div className="text-sm text-[var(--info)] bg-[color:color-mix(in_srgb,var(--info)_15%,transparent)] border border-[color:color-mix(in_srgb,var(--info)_40%,transparent)] rounded p-3">
+              {message}
             </div>
           )}
           <div>

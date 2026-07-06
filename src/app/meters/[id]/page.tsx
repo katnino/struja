@@ -2,8 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import { fetchMeter, fetchReadings, fetchBills } from "@/lib/db";
-import { deleteMeterAction } from "@/app/actions/meters";
 import { formatReading } from "@/lib/format";
+import { DeleteMeterButton } from "@/components/DeleteMeterButton";
 
 export default async function MeterDetailPage({
   params,
@@ -95,15 +95,7 @@ export default async function MeterDetailPage({
           )}
         </Section>
 
-        <form action={deleteMeterAction} className="mt-10 pt-6 border-t border-[var(--border)]">
-          <input type="hidden" name="id" value={meter.id} />
-          <button
-            type="submit"
-            className="text-xs uppercase tracking-widest text-[var(--fg-faint)] hover:text-[var(--danger)] cursor-pointer"
-          >
-            Obriši brojilo (i sve račune)
-          </button>
-        </form>
+        <DeleteMeterButton meterId={meter.id} />
       </main>
     </>
   );

@@ -61,6 +61,9 @@ export function calculateBill(
   approvedKw = 3.3,
   rates: TariffRates = DEFAULT_RATES
 ): BillResult {
+  if (!Number.isFinite(vtKwh) || !Number.isFinite(mtKwh) || vtKwh < 0 || mtKwh < 0) {
+    return buildResult([], 0, approvedKw, rates);
+  }
   const consumptionKwh = vtKwh + mtKwh;
   if (consumptionKwh === 0) return buildResult([], 0, approvedKw, rates);
 

@@ -36,8 +36,13 @@ export async function signUpAction(formData: FormData) {
   if (password.length < 6) signupRedirect("Lozinka mora imati najmanje 6 znakova.");
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({ email: email!, password: password! });
+  const { data, error } = await supabase.auth.signUp({ email: email!, password: password! });
   if (error) signupRedirect(`Registracija neuspješna: ${error.message}`);
+
+  if (!data.session) {
+    // Email confirmation required — Supabase sends a confirmation email
+    redirect("/login?message=Provjerite email za potvrdu registracije.");
+  }
 
   revalidatePath("/", "layout");
   redirect("/");

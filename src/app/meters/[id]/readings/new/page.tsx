@@ -68,6 +68,7 @@ export default async function NewReadingPage({
             prev={prevValues}
             approvedKw={Number(meter.approved_kw)}
             rates={rates}
+            hasPrev={!!prevReading}
           />
         </Suspense>
       </main>
