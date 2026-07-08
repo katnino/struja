@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
-import { fetchMeter, fetchReadings, fetchBills } from "@/lib/db";
+import { fetchMeter, fetchReadings, fetchBills, fetchTariffRates } from "@/lib/db";
 import { formatReading } from "@/lib/format";
 import { DeleteMeterButton } from "@/components/DeleteMeterButton";
+import { MonthOutlookCard } from "@/components/MonthOutlookCard";
+import { buildMonthOutlook, currentMonthKey } from "@/lib/outlook";
 
 export default async function MeterDetailPage({
   params,
@@ -14,10 +16,13 @@ export default async function MeterDetailPage({
   const meter = await fetchMeter(id);
   if (!meter) notFound();
 
-  const [readings, bills] = await Promise.all([
+  const [readings, bills, rates] = await Promise.all([
     fetchReadings(meter.id),
     fetchBills(meter.id),
+    fetchTariffRates(),
   ]);
+
+  const outlook = buildMonthOutlook(readings, currentMonthKey(), rates, Number(meter.approved_kw));
 
   return (
     <>
@@ -35,6 +40,8 @@ export default async function MeterDetailPage({
             {Number(meter.approved_kw)} kW · dvotarifno
           </p>
         </div>
+
+        <MonthOutlookCard outlook={outlook} />
 
         <div className="flex gap-3 mb-8">
           <Link
