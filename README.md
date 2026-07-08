@@ -68,3 +68,8 @@ Env varijable se postavljaju u platform dashboardu.
 ## Napomena
 
 Aplikacija je u ranom razvoju i zasad su zbog načina obračuna samo mjesečna mjerenja faktuelno ispravna. Slike se ne čuvaju. 
+
+## Licenca
+
+PolyForm Strict License 1.0.0
+https://polyformproject.org/licenses/strict/1.0.0
