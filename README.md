@@ -8,9 +8,7 @@ Postupak:
 1. Prijavi se / sign in
 2. Dodaj jedno ili više brojila
 3. Svaki mjesec unesi novo očitanje (sliku) i aplikacija automatski računa potrošnju i izdaje račun naspram predhodnog stanja.
-4. Pregled istorije računa po brojilu
-
-Potrošnju je moguće pratiti bilo kad, ne samo jedanput mjesečno.
+4. Pregled istorije računa po brojilu.
 
 ## Stack
 
@@ -42,7 +40,7 @@ supabase/migrations/
   0002_user_settings.sql  User API keys table
 ```
 
-## Lokalni setup
+## Lokalni setup za developere
 
 1. **Kreiraj Supabase projekat** na https://supabase.com/dashboard
 2. **Pokreni migracije** u Supabase SQL Editor (redom):
