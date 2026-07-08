@@ -63,3 +63,7 @@ supabase/migrations/
 
 Bilo koja Next.js platforma: Vercel (preporučeno), Railway, Fly.io.
 Env varijable se postavljaju u platform dashboardu.
+
+## Napomena
+
+Aplikacija je u ranom stadijumu razvoja. Zasad su zbog načina obračuna samo mjesečna mjerenja faktuelno ispravna.
