@@ -1,11 +1,11 @@
 # Struja
 
-Aplikacija za individualni obračun struje, slikanjem mjerila, za potrošače Elektroprivrede Republike Srpske (ERS) po
-REERS blok tarifi (Odluka 15.12.2022, primjena od 01.01.2023.).
+Aplikacija za individualni obračun struje i praćenje potrošnje slikanjem mjerila (zasad samo analogni, stari satovi), za potrošače Elektroprivrede Republike Srpske (ERS) po
+REERS blok tarifi (Odluka 15.12.2022, primjena od 01.01.2023.). Stanje mjerila je moguće i ručno unjeti.
 
 Postupak:
 
-1. Prijavi se / sign in (Supabase Auth)
+1. Prijavi se / sign in
 2. Dodaj jedno ili više brojila
 3. Svaki mjesec unesi novo očitanje (sliku) i aplikacija automatski računa potrošnju i izdaje račun naspram predhodnog stanja.
 4. Pregled istorije računa po brojilu
@@ -17,7 +17,7 @@ Potrošnju je moguće pratiti bilo kad, ne samo jedanput mjesečno.
 - Next.js 16 (App Router, TypeScript, RSC + Server Actions)
 - Supabase (Auth, Postgres, Row Level Security)
 - Tailwind v4 (custom dark theme)
-- AI vizija: Google Gemini (svaki korisnik unosi svoj besplatni ključ)
+- AI: Google Gemini. Svaki korisnik unosi svoj besplatni ključ koji može da preuzme preko direktnog linka u aplikaciji.
 
 ## Struktura
 
