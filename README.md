@@ -9,6 +9,7 @@ Postupak:
 2. Dodaj jedno ili više brojila
 3. Svaki mjesec unesi novo očitanje (sliku) i aplikacija automatski računa potrošnju i izdaje račun naspram predhodnog stanja.
 4. Pregled istorije računa po brojilu.
+5. Algoritam procijene za mjerenja mimo mjesečnog nivoa.
 
 ## Stack
 
@@ -40,7 +41,7 @@ supabase/migrations/
   0002_user_settings.sql  User API keys table
 ```
 
-## Lokalni setup za developere
+## Lokalni setup 
 
 1. **Kreiraj Supabase projekat** na https://supabase.com/dashboard
 2. **Pokreni migracije** u Supabase SQL Editor (redom):
@@ -66,4 +67,4 @@ Env varijable se postavljaju u platform dashboardu.
 
 ## Napomena
 
-Aplikacija je u ranom stadijumu razvoja. Zasad su zbog načina obračuna samo mjesečna mjerenja faktuelno ispravna.
+Aplikacija je u ranom razvoju i zasad su zbog načina obračuna samo mjesečna mjerenja faktuelno ispravna. Slike se ne čuvaju. 
