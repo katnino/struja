@@ -15,6 +15,12 @@ const MONTH_NAMES = [
   "decembar",
 ];
 
+function blockColor(label: string): string {
+  if (label.includes("I ")) return "#22c55e";  // bright green
+  if (label.includes("II ")) return "#f97316";  // orange
+  return "#ef4444";  // bright red
+}
+
 export function MonthOutlookCard({ outlook }: { outlook: MonthOutlook }) {
   const monthLabel = MONTH_NAMES[outlook.monthKey.month - 1];
 
@@ -53,7 +59,10 @@ export function MonthOutlookCard({ outlook }: { outlook: MonthOutlook }) {
 	          {monthLabel}
 	        </p>
 	        {topBlock && (
-	          <span className="text-[10px] uppercase tracking-widest text-[var(--accent-strong)]">
+	          <span
+	            className="text-[10px] uppercase tracking-widest"
+	            style={{ color: blockColor(topBlock.label) }}
+	          >
 	            {topBlock.label}
 	          </span>
 	        )}
