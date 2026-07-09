@@ -1,15 +1,16 @@
 # Struja
 
-Aplikacija za individualni obračun struje i praćenje potrošnje slikanjem mjerila (zasad samo analogni, stari satovi), za potrošače Elektroprivrede Republike Srpske (ERS) po
+Aplikacija za individualni obračun struje i procjenu potrošnje slikanjem mjerila (zasad samo analogni, stari satovi, ostali ručni unos), za potrošače Elektroprivrede Republike Srpske (ERS) po
 REERS blok tarifi (Odluka 15.12.2022, primjena od 01.01.2023.). Stanje mjerila je moguće i ručno unjeti.
 
 Postupak:
 
-1. Prijavi se / sign in
+1. Prijavi se / sign in (ne mora biti validan email)
 2. Dodaj jedno ili više brojila
 3. Svaki mjesec unesi novo očitanje (sliku) i aplikacija automatski računa potrošnju i izdaje račun naspram predhodnog stanja.
-4. Pregled istorije računa po brojilu.
-5. Algoritam procijene za mjerenja mimo mjesečnog nivoa.
+4. Mogućnost pravljenja raznih vrsta obračuna za isto brojilo.
+5. Pregled istorije računa po brojilu.
+6. Algoritam procijene utroška.
 
 ## Stack
 
