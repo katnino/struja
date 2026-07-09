@@ -55,6 +55,11 @@ export async function createReadingAction(input: NewReadingInput) {
   const rates = await fetchTariffRates();
   const prev = await fetchLatestReading(input.meter_id);
 
+  // Reject if previous reading has null VT or MT — consumption can't be computed
+  if (prev && (prev.vt === null || prev.mt === null)) {
+    fail(input.meter_id, "Prethodno očitanje ima nepotpune podatke.");
+  }
+
   const prevVt = prev?.vt ?? undefined;
   const prevMt = prev?.mt ?? undefined;
 

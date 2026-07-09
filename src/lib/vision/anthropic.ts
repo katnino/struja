@@ -42,7 +42,16 @@ export function createAnthropicProvider(config: VisionConfig): VisionProvider {
       const textBlock = data.content?.find((b: Record<string, unknown>) => b.type === "text");
       const text = (textBlock?.text as string) ?? "";
       const clean = text.replace(/```json|```/g, "").trim();
-      return JSON.parse(clean) as ExtractResult;
+
+      try {
+        const parsed = JSON.parse(clean) as ExtractResult;
+        return parsed;
+      } catch {
+        return {
+          confidence: "low",
+          note: `Anthropic returned unparseable JSON: ${clean.slice(0, 300)}`,
+        };
+      }
     },
   };
 }

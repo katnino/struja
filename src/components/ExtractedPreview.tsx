@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { ExtractResult } from "@/lib/vision/types";
 
 export function ExtractedPreview({
@@ -9,6 +10,10 @@ export function ExtractedPreview({
   result: ExtractResult;
   onEdit: (updated: { vt?: number; mt?: number }) => void;
 }) {
+  // Track local edits so editing one field does not lose the other
+  const [localVt, setLocalVt] = useState<number | undefined>(result.vt);
+  const [localMt, setLocalMt] = useState<number | undefined>(result.mt);
+
   const isLow = result.confidence === "low";
   const bg = isLow ? "#2d1515" : "#0f2d1a";
   const border = isLow ? "var(--danger)" : "var(--success)";
@@ -44,10 +49,13 @@ export function ExtractedPreview({
           <input
             type="number"
             step="1"
-            defaultValue={result.vt}
+            value={localVt ?? ""}
             onChange={(e) => {
               const v = parseInt(e.target.value, 10);
-              if (Number.isFinite(v)) onEdit({ vt: v, mt: result.mt });
+              if (Number.isFinite(v)) {
+                setLocalVt(v);
+                onEdit({ vt: v, mt: localMt });
+              }
             }}
             style={{
               background: "transparent",
@@ -69,10 +77,13 @@ export function ExtractedPreview({
           <input
             type="number"
             step="1"
-            defaultValue={result.mt}
+            value={localMt ?? ""}
             onChange={(e) => {
               const v = parseInt(e.target.value, 10);
-              if (Number.isFinite(v)) onEdit({ vt: result.vt, mt: v });
+              if (Number.isFinite(v)) {
+                setLocalMt(v);
+                onEdit({ vt: localVt, mt: v });
+              }
             }}
             style={{
               background: "transparent",

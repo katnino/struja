@@ -17,6 +17,7 @@ export function createOpenAIProvider(config: VisionConfig): VisionProvider {
         body: JSON.stringify({
           model,
           max_tokens: 1000,
+          response_format: { type: "json_object" },
           messages: [
             {
               role: "user",
@@ -40,7 +41,16 @@ export function createOpenAIProvider(config: VisionConfig): VisionProvider {
       const data = await res.json();
       const text = data.choices?.[0]?.message?.content ?? "";
       const clean = text.replace(/```json|```/g, "").trim();
-      return JSON.parse(clean) as ExtractResult;
+
+      try {
+        const parsed = JSON.parse(clean) as ExtractResult;
+        return parsed;
+      } catch {
+        return {
+          confidence: "low",
+          note: `OpenAI returned unparseable JSON: ${clean.slice(0, 300)}`,
+        };
+      }
     },
   };
 }
