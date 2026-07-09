@@ -1,5 +1,6 @@
 import type { TariffRates } from "./tariff";
 import { createClient } from "./supabase/server";
+import { encryptSecret, decryptSecret } from "./crypto";
 
 export interface Meter {
   id: string;
@@ -171,7 +172,9 @@ export async function fetchUserApiKey(userId: string): Promise<string | null> {
     .select("ai_api_key")
     .eq("user_id", userId)
     .maybeSingle();
-  return (data?.ai_api_key as string | null) ?? null;
+  const stored = (data?.ai_api_key as string | null) ?? null;
+  if (!stored) return null;
+  return decryptSecret(stored);
 }
 
 export async function saveUserApiKey(
@@ -180,7 +183,7 @@ export async function saveUserApiKey(
 ): Promise<void> {
   const supabase = await createClient();
   const { error } = await supabase.from("user_settings").upsert(
-    { user_id: userId, ai_api_key: key, updated_at: new Date().toISOString() },
+    { user_id: userId, ai_api_key: encryptSecret(key), updated_at: new Date().toISOString() },
     { onConflict: "user_id" },
   );
   if (error) throw new Error(error.message);
