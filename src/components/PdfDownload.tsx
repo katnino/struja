@@ -128,7 +128,7 @@ export function PdfDownload({
   return (
     <button
       onClick={handleDownload}
-      className="flex-1 text-center py-3 rounded bg-[var(--surface-2)] hover:bg-[var(--border-strong)] text-[var(--fg)] uppercase tracking-widest text-xs font-bold cursor-pointer border border-[var(--border-strong)]"
+      className="flex-1 text-center py-3 rounded bg-surface-2 hover:bg-border-strong text-fg uppercase tracking-widest text-xs font-bold cursor-pointer border border-border-strong"
     >
       Preuzmi PDF
     </button>

@@ -20,11 +20,11 @@ export function MonthOutlookCard({ outlook }: { outlook: MonthOutlook }) {
 
   if (outlook.confidence === "insufficient_data") {
     return (
-      <div className="border border-dashed border-[var(--border-strong)] rounded-lg p-4 mb-6 text-center">
-        <p className="text-[11px] uppercase tracking-widest text-[var(--fg-mute)] mb-1">
+      <div className="border border-border-strong rounded-lg p-4 mb-6 text-center">
+        <p className="text-11px uppercase tracking-widest text-fg-mute mb-1">
           📈 Procjena za {monthLabel}
         </p>
-        <p className="text-xs text-[var(--fg-dim)]">
+        <p className="text-xs text-fg-dim">
           Nema dovoljno očitanja za procjenu. Dodaj još jedno očitanje.
         </p>
       </div>
@@ -46,30 +46,30 @@ export function MonthOutlookCard({ outlook }: { outlook: MonthOutlook }) {
   const topBlock = bill?.blocks[bill.blocks.length - 1];
 
   return (
-    <div className="border border-[var(--border)] rounded-lg p-4 mb-6 bg-[var(--surface)]">
+    <div className="border border-border rounded-lg p-4 mb-6 bg-surface">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-[11px] uppercase tracking-widest text-[var(--fg-mute)]">
+        <p className="text-11px uppercase tracking-widest text-fg-mute">
           {confidence === "measured" ? "📊 Mjesec" : "📈 Procjena"} ·{" "}
           {monthLabel}
         </p>
         {topBlock && (
-          <span className="text-[10px] uppercase tracking-widest text-[var(--accent-strong)]">
+          <span className="text-10px uppercase tracking-widest text-accent-strong">
             {topBlock.label}
           </span>
         )}
       </div>
 
-      <div className="text-xl font-bold text-[var(--fg-strong)] mb-1">
+      <div className="text-xl font-bold text-fg-strong mb-1">
         ~{totalKwh.toFixed(0)} kWh
         {bill && (
-          <span className="text-sm font-normal text-[var(--fg-mute)] ml-2">
+          <span className="text-sm font-normal text-fg-mute ml-2">
             · ~{bill.total.toFixed(2)} KM
           </span>
         )}
       </div>
 
       {confidence === "projected" ? (
-        <p className="text-[11px] text-[var(--fg-dim)]">
+        <p className="text-11px text-fg-dim">
           {actualKwh.toFixed(0)} kWh izmjereno + ~{projectedKwh.toFixed(0)} kWh
           projektovano
           {runRate && (
@@ -81,7 +81,7 @@ export function MonthOutlookCard({ outlook }: { outlook: MonthOutlook }) {
           )}
         </p>
       ) : (
-        <p className="text-[11px] text-[var(--fg-dim)]">
+        <p className="text-11px text-fg-dim">
           Kompletno izmjereno za ovaj mjesec
         </p>
       )}
