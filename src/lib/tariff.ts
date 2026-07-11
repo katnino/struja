@@ -46,6 +46,7 @@ export interface BillResult {
   vatAmount: number;
   total: number;
   consumptionKwh: number;
+  isPartialObračun?: boolean;
 }
 
 export function splitBlocks(total: number, rates: TariffRates = DEFAULT_RATES) {
@@ -59,13 +60,14 @@ export function calculateBill(
   vtKwh: number,
   mtKwh: number,
   approvedKw = 3.3,
-  rates: TariffRates = DEFAULT_RATES
+  rates: TariffRates = DEFAULT_RATES,
+  daysInPeriod?: number
 ): BillResult {
   if (!Number.isFinite(vtKwh) || !Number.isFinite(mtKwh) || vtKwh < 0 || mtKwh < 0) {
-    return buildResult([], 0, approvedKw, rates);
+    return buildResult([], 0, approvedKw, rates, daysInPeriod);
   }
   const consumptionKwh = vtKwh + mtKwh;
-  if (consumptionKwh === 0) return buildResult([], 0, approvedKw, rates);
+  if (consumptionKwh === 0) return buildResult([], 0, approvedKw, rates, daysInPeriod);
 
   const vtRatio = vtKwh / consumptionKwh;
   const mtRatio = mtKwh / consumptionKwh;
@@ -84,12 +86,13 @@ export function calculateBill(
     const cost = iii * vtRatio * rates.vt.iii + iii * mtRatio * rates.mt.iii;
     blocks.push({ label: "Blok III (1501+ kWh)", kwh: iii, rate: cost / iii, cost, oie: iii * rates.oieRate });
   }
-  return buildResult(blocks, consumptionKwh, approvedKw, rates);
+  return buildResult(blocks, consumptionKwh, approvedKw, rates, daysInPeriod);
 }
 
-function buildResult(blocks: BlockBreakdown[], totalKwh: number, approvedKw: number, rates: TariffRates): BillResult {
-  const mjernoMjesto = rates.mjernoMjesto;
-  const obracunskaSnaga = approvedKw * rates.obracunskaSnagaRate;
+function buildResult(blocks: BlockBreakdown[], totalKwh: number, approvedKw: number, rates: TariffRates, daysInPeriod?: number): BillResult {
+  const isPartial = daysInPeriod !== undefined && daysInPeriod < 29;
+  const mjernoMjesto = isPartial ? 0 : rates.mjernoMjesto;
+  const obracunskaSnaga = isPartial ? 0 : approvedKw * rates.obracunskaSnagaRate;
   const totalEnergy = blocks.reduce((s, b) => s + b.cost, 0);
   const totalOie = blocks.reduce((s, b) => s + b.oie, 0);
   const subtotal = mjernoMjesto + obracunskaSnaga + totalEnergy + totalOie;
@@ -105,6 +108,7 @@ function buildResult(blocks: BlockBreakdown[], totalKwh: number, approvedKw: num
     vatAmount,
     total: subtotal + vatAmount,
     consumptionKwh: totalKwh,
+    isPartialObračun: isPartial,
   };
 }
 

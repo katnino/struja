@@ -89,11 +89,15 @@ export async function createReadingAction(input: NewReadingInput) {
   if (prev) {
     const consumptionVt = input.vt! - (prevVt ?? 0);
     const consumptionMt = input.mt! - (prevMt ?? 0);
+    const prevDate = new Date(prev.recorded_at);
+    const currDate = new Date(input.recorded_at);
+    const daysInPeriod = Math.round((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
     const result = calculateBill(
       consumptionVt,
       consumptionMt,
       Number(meter.approved_kw),
-      rates
+      rates,
+      daysInPeriod
     );
 
     const { error: billErr } = await supabase.from("bills").insert({

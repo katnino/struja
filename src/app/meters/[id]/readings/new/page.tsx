@@ -66,6 +66,7 @@ export default async function NewReadingPage({
           <ReadingFormClient
             meterId={meter.id}
             prev={prevValues}
+            prevRecordedAt={prevReading?.recorded_at}
             approvedKw={Number(meter.approved_kw)}
             rates={rates}
             hasPrev={!!prevReading}

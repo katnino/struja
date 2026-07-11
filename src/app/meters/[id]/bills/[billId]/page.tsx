@@ -14,6 +14,11 @@ export default async function BillDetailPage({
   const [meter, bill] = await Promise.all([fetchMeter(id), fetchBill(billId)]);
   if (!meter || !bill || bill.meter_id !== meter.id) notFound();
 
+  const periodStart = new Date(bill.period_start);
+  const periodEnd = new Date(bill.period_end);
+  const daysInPeriod = Math.round((periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24));
+  const isPartialObračun = daysInPeriod < 29;
+
   return (
     <>
       <Header />
@@ -47,6 +52,7 @@ export default async function BillDetailPage({
           vatAmount={Number(bill.vat_amount)}
           total={Number(bill.total)}
           consumptionKwh={Number(bill.consumption_kwh)}
+          isPartialObračun={isPartialObračun}
         />
 
         <div className="mt-4">
@@ -61,6 +67,7 @@ export default async function BillDetailPage({
             vatAmount={Number(bill.vat_amount)}
             total={Number(bill.total)}
             consumptionKwh={Number(bill.consumption_kwh)}
+            isPartialObračun={isPartialObračun}
           />
         </div>
 

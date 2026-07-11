@@ -17,6 +17,7 @@ export function BillBreakdown({
   vatAmount,
   total,
   consumptionKwh,
+  isPartialObračun,
 }: {
   blocks: BlockBreakdown[];
   approved_kw: number;
@@ -28,6 +29,7 @@ export function BillBreakdown({
   vatAmount: number;
   total: number;
   consumptionKwh: number;
+  isPartialObračun?: boolean;
 }) {
   return (
     <div className="mt-5 rounded-lg border border-[color:color-mix(in_srgb,var(--accent-strong)_30%,transparent)] bg-black/30 p-5">
@@ -62,15 +64,27 @@ export function BillBreakdown({
         ))}
       </div>
 
-      <Row label="Mjerno mjesto" value={`${mjernoMjesto.toFixed(2)} KM`} />
-      <Row
-        label={`Obračunska snaga (${approved_kw} kW)`}
-        value={`${obracunskaSnaga.toFixed(2)} KM`}
-      />
+      {!isPartialObračun && (
+        <>
+          <Row label="Mjerno mjesto" value={`${mjernoMjesto.toFixed(2)} KM`} />
+          <Row
+            label={`Obračunska snaga (${approved_kw} kW)`}
+            value={`${obracunskaSnaga.toFixed(2)} KM`}
+          />
+        </>
+      )}
       <Row label="Aktivna energija" value={`${totalEnergy.toFixed(2)} KM`} />
       <Row label="Naknada OIE" value={`${totalOie.toFixed(2)} KM`} />
-      <Row label="Osnovica (bez PDV)" value={`${subtotal.toFixed(2)} KM`} muted />
-      <Row label="PDV (17%)" value={`${vatAmount.toFixed(2)} KM`} muted last />
+      {isPartialObračun ? (
+        <div className="text-[11px] text-[var(--warn)] py-2 border-b border-[var(--surface-2)] italic">
+          * Ostale stavke (Mjerno mjesto, Obračunska snaga, PDV) nisu uključene jer obračunski period iznosi manje od 29 dana (nije puni mjesečni obračun).
+        </div>
+      ) : (
+        <>
+          <Row label="Osnovica (bez PDV)" value={`${subtotal.toFixed(2)} KM`} muted />
+          <Row label="PDV (17%)" value={`${vatAmount.toFixed(2)} KM`} muted last />
+        </>
+      )}
 
       <div className="flex justify-between items-center pt-3 mt-2 border-t border-[var(--border)]">
         <span className="text-sm font-bold text-[color:color-mix(in_srgb,var(--accent-strong)_70%,white)]">

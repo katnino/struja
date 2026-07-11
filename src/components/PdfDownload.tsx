@@ -16,6 +16,7 @@ export function PdfDownload({
   vatAmount,
   total,
   consumptionKwh,
+  isPartialObračun,
 }: {
   meterName: string;
   periodStart: string;
@@ -30,6 +31,7 @@ export function PdfDownload({
   vatAmount: number;
   total: number;
   consumptionKwh: number;
+  isPartialObračun?: boolean;
 }) {
   const handleDownload = async () => {
     const { jsPDF } = await import("jspdf");
@@ -95,13 +97,24 @@ export function PdfDownload({
     line();
 
     // Line items
-    row("Mjerno mjesto", `${mjernoMjesto.toFixed(2)} KM`);
-    row(`Obračunska snaga (${approvedKw} kW)`, `${obracunskaSnaga.toFixed(2)} KM`);
+    if (!isPartialObračun) {
+      row("Mjerno mjesto", `${mjernoMjesto.toFixed(2)} KM`);
+      row(`Obračunska snaga (${approvedKw} kW)`, `${obracunskaSnaga.toFixed(2)} KM`);
+    }
     row("Aktivna energija", `${totalEnergy.toFixed(2)} KM`);
     row("Naknada OIE", `${totalOie.toFixed(2)} KM`);
-    y += 1;
-    row("Osnovica (bez PDV)", `${subtotal.toFixed(2)} KM`);
-    row("PDV (17%)", `${vatAmount.toFixed(2)} KM`);
+    if (isPartialObračun) {
+      y += 1;
+      pdf.setFontSize(9);
+      pdf.setTextColor(180);
+      pdf.text("* Ostale stavke nisu uključene (period kraći od 29 dana).", margin, y);
+      y += 6;
+      pdf.setTextColor(0);
+    } else {
+      y += 1;
+      row("Osnovica (bez PDV)", `${subtotal.toFixed(2)} KM`);
+      row("PDV (17%)", `${vatAmount.toFixed(2)} KM`);
+    }
 
     line();
 

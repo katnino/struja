@@ -16,12 +16,14 @@ export function ReadingFormClient({
   approvedKw,
   rates,
   hasPrev,
+  prevRecordedAt,
 }: {
   meterId: string;
   prev: { vt?: number; mt?: number };
   approvedKw: number;
   rates: TariffRates;
   hasPrev: boolean;
+  prevRecordedAt?: string;
 }) {
   const today = new Date().toISOString().slice(0, 10);
 
@@ -123,8 +125,16 @@ export function ReadingFormClient({
     const consumptionVt = currVt - (prev.vt ?? 0);
     const consumptionMt = currMt - (prev.mt ?? 0);
     if (consumptionVt < 0 || consumptionMt < 0) return null;
-    return calculateBill(consumptionVt, consumptionMt, approvedKw, rates);
-  }, [vt, mt, inputMode, submitValues, prev, approvedKw, rates]);
+
+    let daysInPeriod: number | undefined;
+    if (prevRecordedAt && recordedAt) {
+      const prevDate = new Date(prevRecordedAt);
+      const currDate = new Date(recordedAt);
+      daysInPeriod = Math.round((currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+    return calculateBill(consumptionVt, consumptionMt, approvedKw, rates, daysInPeriod);
+  }, [vt, mt, inputMode, submitValues, prev, approvedKw, rates, prevRecordedAt, recordedAt]);
 
   const style = {
     segmented: {
@@ -293,6 +303,7 @@ export function ReadingFormClient({
             vatAmount={preview.vatAmount}
             total={preview.total}
             consumptionKwh={preview.consumptionKwh}
+            isPartialObračun={preview.isPartialObračun}
           />
         )}
 
