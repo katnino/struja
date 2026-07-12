@@ -91,12 +91,22 @@ export function calculateBill(
 
 function buildResult(blocks: BlockBreakdown[], totalKwh: number, approvedKw: number, rates: TariffRates, daysInPeriod?: number): BillResult {
   const isPartial = daysInPeriod !== undefined && daysInPeriod < 29;
-  const mjernoMjesto = isPartial ? 0 : rates.mjernoMjesto;
-  const obracunskaSnaga = isPartial ? 0 : approvedKw * rates.obracunskaSnagaRate;
+
+  // These are always the REAL values now (never zeroed), so the UI has
+  // something to display even when the period is partial. Whether they
+  // actually count toward the bill total is decided below via
+  // `includedFixedCharges` — the math the customer is actually charged
+  // is unchanged from before.
+  const mjernoMjesto = rates.mjernoMjesto;
+  const obracunskaSnaga = approvedKw * rates.obracunskaSnagaRate;
+
   const totalEnergy = blocks.reduce((s, b) => s + b.cost, 0);
   const totalOie = blocks.reduce((s, b) => s + b.oie, 0);
-  const subtotal = mjernoMjesto + obracunskaSnaga + totalEnergy + totalOie;
+
+  const includedFixedCharges = isPartial ? 0 : mjernoMjesto + obracunskaSnaga;
+  const subtotal = includedFixedCharges + totalEnergy + totalOie;
   const vatAmount = subtotal * rates.vat;
+
   return {
     blocks,
     totalKwh,
@@ -111,4 +121,3 @@ function buildResult(blocks: BlockBreakdown[], totalKwh: number, approvedKw: num
     isPartialObračun: isPartial,
   };
 }
-

@@ -64,20 +64,23 @@ export function BillBreakdown({
         ))}
       </div>
 
-      {!isPartialObračun && (
-        <>
-          <Row label="Mjerno mjesto" value={`${mjernoMjesto.toFixed(2)} KM`} />
-          <Row
-            label={`Obračunska snaga (${approved_kw} kW)`}
-            value={`${obracunskaSnaga.toFixed(2)} KM`}
-          />
-        </>
-      )}
+      <Row
+        label="Mjerno mjesto"
+        value={`${mjernoMjesto.toFixed(2)} KM`}
+        excluded={isPartialObračun}
+      />
+      <Row
+        label={`Obračunska snaga (${approved_kw} kW)`}
+        value={`${obracunskaSnaga.toFixed(2)} KM`}
+        excluded={isPartialObračun}
+      />
       <Row label="Aktivna energija" value={`${totalEnergy.toFixed(2)} KM`} />
       <Row label="Naknada OIE" value={`${totalOie.toFixed(2)} KM`} />
       {isPartialObračun ? (
-        <div className="text-[11px] text-[var(--warn)] py-2 border-b border-[var(--surface-2)] italic">
-          * Ostale stavke (Mjerno mjesto, Obračunska snaga, PDV) nisu uključene jer obračunski period iznosi manje od 29 dana (nije puni mjesečni obračun).
+        <div className="text-[11px] text-[var(--danger)] py-2 border-b border-[var(--surface-2)] italic">
+          * Mjerno mjesto, Obračunska snaga i PDV (crveno) nisu uključeni u
+          ukupan iznos jer obračunski period iznosi manje od 29 dana (nije
+          puni mjesečni obračun).
         </div>
       ) : (
         <>
@@ -103,11 +106,13 @@ function Row({
   value,
   muted,
   last,
+  excluded,
 }: {
   label: string;
   value: string;
   muted?: boolean;
   last?: boolean;
+  excluded?: boolean;
 }) {
   return (
     <div
@@ -115,8 +120,24 @@ function Row({
         last ? "border-b border-[var(--border)]" : "border-b border-[var(--surface-2)]"
       } ${muted ? "text-[var(--fg-dim)] text-xs" : ""}`}
     >
-      <span className={muted ? "" : "text-[var(--fg-mute)]"}>{label}</span>
-      <span className={muted ? "" : "font-semibold text-[var(--fg)]"}>{value}</span>
+      <span
+        className={
+          excluded ? "text-[var(--danger)]" : muted ? "" : "text-[var(--fg-mute)]"
+        }
+      >
+        {label}
+      </span>
+      <span
+        className={
+          excluded
+            ? "text-[var(--danger)] font-semibold"
+            : muted
+              ? ""
+              : "font-semibold text-[var(--fg)]"
+        }
+      >
+        {value}
+      </span>
     </div>
   );
 }

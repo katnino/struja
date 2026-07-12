@@ -41,6 +41,9 @@ export function PdfDownload({
     const margin = 10;
     let y = margin;
 
+    // Matches var(--danger) (#ef4444) used in the web UI
+    const dangerColor: [number, number, number] = [239, 68, 68];
+
     const line = () => {
       y += 2;
       pdf.setDrawColor(200);
@@ -48,12 +51,18 @@ export function PdfDownload({
       y += 4;
     };
 
-    const row = (label: string, value: string, bold = false) => {
+    const row = (
+      label: string,
+      value: string,
+      bold = false,
+      color?: [number, number, number],
+    ) => {
       pdf.setFontSize(11);
-      if (bold) pdf.setFont("helvetica", "bold");
-      else pdf.setFont("helvetica", "normal");
+      pdf.setFont("helvetica", bold ? "bold" : "normal");
+      if (color) pdf.setTextColor(...color);
       pdf.text(label, margin, y);
       pdf.text(value, pageW + margin, y, { align: "right" });
+      if (color) pdf.setTextColor(0);
       y += 6;
     };
 
@@ -96,18 +105,32 @@ export function PdfDownload({
 
     line();
 
-    // Line items
-    if (!isPartialObračun) {
-      row("Mjerno mjesto", `${mjernoMjesto.toFixed(2)} KM`);
-      row(`Obračunska snaga (${approvedKw} kW)`, `${obracunskaSnaga.toFixed(2)} KM`);
-    }
+    // Line items — Mjerno mjesto / Obračunska snaga are always shown now;
+    // they're just colored red when the period is partial (<29 days) to
+    // indicate they weren't counted toward the total.
+    row(
+      "Mjerno mjesto",
+      `${mjernoMjesto.toFixed(2)} KM`,
+      false,
+      isPartialObračun ? dangerColor : undefined,
+    );
+    row(
+      `Obračunska snaga (${approvedKw} kW)`,
+      `${obracunskaSnaga.toFixed(2)} KM`,
+      false,
+      isPartialObračun ? dangerColor : undefined,
+    );
     row("Aktivna energija", `${totalEnergy.toFixed(2)} KM`);
     row("Naknada OIE", `${totalOie.toFixed(2)} KM`);
     if (isPartialObračun) {
       y += 1;
       pdf.setFontSize(9);
-      pdf.setTextColor(180);
-      pdf.text("* Ostale stavke nisu uključene (period kraći od 29 dana).", margin, y);
+      pdf.setTextColor(...dangerColor);
+      pdf.text(
+        "* Mjerno mjesto, Obračunska snaga i PDV nisu uključeni u ukupan iznos (period kraći od 29 dana).",
+        margin,
+        y,
+      );
       y += 6;
       pdf.setTextColor(0);
     } else {
