@@ -1,7 +1,7 @@
 # Struja
 
-Aplikacija za individualni obračun struje i procjenu potrošnje slikanjem mjerila (zasad samo analogni, stari satovi, ostali manuelan unos), za potrošače Elektroprivrede Republike Srpske (ERS) po
-REERS blok tarifi (Odluka 15.12.2022, primjena od 01.01.2023.). Stanje mjerila je moguće i ručno unjeti.
+Aplikacija za individualni obračun utroška električne energije i procjenu potrošnje iste slikanjem mjerila (zasad samo analogni, stari satovi, ostali manuelan unos), za potrošače Elektroprivrede Republike Srpske (ERS) po
+REERS blok tarifi. U nedostatku fotografije stanje mjerila je moguće i ručno unjeti.
 
 Postupak:
 
