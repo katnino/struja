@@ -18,13 +18,13 @@ export interface TariffRates {
 
 export const DEFAULT_RATES: TariffRates = {
   mjernoMjesto: 2.48,
-  obracunskaSnagaRate: 3.2425,
+  obracunskaSnagaRate: 3.1668,
   oieRate: 0.0007,
   vat: 0.17,
   blockI: 500,
   blockII: 1500,
-  vt: { i: 0.0813, ii: 0.1277, iii: 0.2425 },
-  mt: { i: 0.0406, ii: 0.0638, iii: 0.1212 },
+  vt: { i: 0.1324, ii: 0.1770, iii: 0.3094 },
+  mt: { i: 0.0663, ii: 0.0886, iii: 0.1548 },
 };
 
 export interface BlockBreakdown {
