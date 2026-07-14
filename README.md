@@ -11,11 +11,6 @@ Postupak:
 4. Pregled istorije računa po brojilu.
 5. Algoritam procijene potrošnje.
 
-## Stack
-
-- Next.js 16 (App Router, TypeScript, RSC + Server Actions)
-- Supabase (Auth, Postgres, Row Level Security)
-- Tailwind v4 (custom dark theme)
 - AI: Google Gemini. Svaki korisnik unosi svoj besplatni ključ koji može da preuzme preko direktnog linka u aplikaciji.
 
 ## Struktura
@@ -41,33 +36,9 @@ supabase/migrations/
   0002_user_settings.sql  User API keys table
 ```
 
-## Lokalni setup 
-
-1. **Kreiraj Supabase projekat** na https://supabase.com/dashboard
-2. **Pokreni migracije** u Supabase SQL Editor (redom):
-   - `supabase/migrations/0001_initial.sql`
-   - `supabase/migrations/0002_user_settings.sql`
-3. **Kopiraj env varijable**:
-   ```bash
-   cp .env.local.example .env.local
-   # uredi .env.local — paste URL + anon key
-   ```
-4. **Dev server**:
-   ```bash
-   npm install
-   npm run dev
-   ```
-5. Otvori http://localhost:3000, registruj se, dodaj brojilo, dodaj prvo očitanje.
-6. Pri prvom AI prepoznavanju unesi besplatni Gemini ključ (link u app).
-
-## Deploy
-
-Bilo koja Next.js platforma: Vercel (preporučeno), Railway, Fly.io.
-Env varijable se postavljaju u platform dashboardu.
-
 ## Napomena
 
-Aplikacija je u ranom razvoju i zasad su zbog načina obračuna samo mjesečna mjerenja faktuelno ispravna. Slike se ne čuvaju. 
+Aplikacija je u beta fazi tj. ranom razvoju i moguće su neželjene promjene. Slike se ne čuvaju. 
 
 ## Licenca
 
