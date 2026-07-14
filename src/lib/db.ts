@@ -47,18 +47,23 @@ export interface Bill {
     label: string;
     kwh: number;
     rate: number;
-    cost: number;
-    oie: number;
+    activeEnergyCost: number;
+    transmissionCost: number;
+    distributionCost: number;
+    oieCost: number;
+    totalCost: number;
   }>;
   created_at: string;
 }
 
 const TARIFF_RATES_COLUMNS =
   "id, effective_from, source_label, " +
-  "mjerno_mjesto, obracunska_snaga, oie_rate, vat, " +
+  "service_fee, power_flat_rate, power_kw_rate, oie_rate, vat, " +
   "block_i, block_ii, " +
   "tg2_vt_i, tg2_vt_ii, tg2_vt_iii, " +
-  "tg2_mt_i, tg2_mt_ii, tg2_mt_iii";
+  "tg2_mt_i, tg2_mt_ii, tg2_mt_iii, " +
+  "transmission_vt, transmission_mt, " +
+  "distribution_vt, distribution_mt";
 
 export async function fetchTariffRates(): Promise<TariffRates> {
   const supabase = await createClient();
@@ -73,8 +78,9 @@ export async function fetchTariffRates(): Promise<TariffRates> {
   }
   const row = data as unknown as Record<string, string | number>;
   return {
-    mjernoMjesto: Number(row.mjerno_mjesto),
-    obracunskaSnagaRate: Number(row.obracunska_snaga),
+    serviceFee: Number(row.service_fee),
+    powerFlatRate: Number(row.power_flat_rate),
+    powerKwRate: Number(row.power_kw_rate),
     oieRate: Number(row.oie_rate),
     vat: Number(row.vat),
     blockI: Number(row.block_i),
@@ -88,6 +94,14 @@ export async function fetchTariffRates(): Promise<TariffRates> {
       i: Number(row.tg2_mt_i),
       ii: Number(row.tg2_mt_ii),
       iii: Number(row.tg2_mt_iii),
+    },
+    transmission: {
+      vt: Number(row.transmission_vt),
+      mt: Number(row.transmission_mt),
+    },
+    distribution: {
+      vt: Number(row.distribution_vt),
+      mt: Number(row.distribution_mt),
     },
   };
 }

@@ -18,14 +18,21 @@ describe("tariff calculations", () => {
   });
 
   describe("calculateBill", () => {
-    it("should calculate a basic bill correctly", () => {
-      const vt = 100;
-      const mt = 100;
-      const result = calculateBill(vt, mt);
+    it("should calculate the June 2026 bill like the paper invoice", () => {
+      const result = calculateBill(136, 108);
 
-      expect(result.consumptionKwh).toBe(200);
-      expect(result.blocks).toHaveLength(1); // Only Block I
-      expect(result.blocks[0].kwh).toBe(200);
+      expect(result.consumptionKwh).toBe(244);
+      expect(result.blocks).toHaveLength(1);
+      expect(result.blocks[0].kwh).toBe(244);
+      expect(result.totalEnergy).toBeCloseTo(15.44, 2);
+      expect(result.totalTransmission).toBeCloseTo(3.09, 2);
+      expect(result.totalDistribution).toBeCloseTo(23.49, 2);
+      expect(result.totalOie).toBeCloseTo(0.18, 2);
+      expect(result.mjernoMjesto).toBeCloseTo(2.48, 2);
+      expect(result.obracunskaSnaga).toBeCloseTo(11.51, 2);
+      expect(result.subtotal).toBeCloseTo(44.68, 2);
+      expect(result.vatAmount).toBeCloseTo(7.60, 2);
+      expect(result.total).toBeCloseTo(52.28, 2);
     });
 
     it("should handle zero consumption", () => {
@@ -33,6 +40,8 @@ describe("tariff calculations", () => {
       expect(result.consumptionKwh).toBe(0);
       expect(result.blocks).toHaveLength(0);
       expect(result.totalEnergy).toBe(0);
+      expect(result.totalTransmission).toBe(0);
+      expect(result.totalDistribution).toBe(0);
     });
 
     it("should handle invalid inputs", () => {
@@ -58,7 +67,7 @@ describe("tariff calculations", () => {
     it("should correctly apply VAT", () => {
       const result = calculateBill(100, 100);
       const expectedVat = result.subtotal * DEFAULT_RATES.vat;
-      expect(result.vatAmount).toBeCloseTo(expectedVat, 5);
+      expect(result.vatAmount).toBeCloseTo(Math.round(expectedVat * 100) / 100, 5);
       expect(result.total).toBeCloseTo(result.subtotal + result.vatAmount, 5);
     });
   });

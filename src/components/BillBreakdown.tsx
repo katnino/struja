@@ -8,10 +8,12 @@ export function BlockColor(label: string): string {
 
 export function BillBreakdown({
   blocks,
-  approved_kw,
   mjernoMjesto,
-  obracunskaSnaga,
   totalEnergy,
+  transmissionBaseCost,
+  totalTransmission,
+  distributionBaseCost,
+  totalDistribution,
   totalOie,
   subtotal,
   vatAmount,
@@ -20,10 +22,12 @@ export function BillBreakdown({
   isPartialObračun,
 }: {
   blocks: BlockBreakdown[];
-  approved_kw: number;
   mjernoMjesto: number;
-  obracunskaSnaga: number;
   totalEnergy: number;
+  transmissionBaseCost: number;
+  totalTransmission: number;
+  distributionBaseCost: number;
+  totalDistribution: number;
   totalOie: number;
   subtotal: number;
   vatAmount: number;
@@ -58,7 +62,7 @@ export function BillBreakdown({
           >
             <span style={{ color: BlockColor(b.label) }}>■ {b.label}</span>
             <span>
-              {b.kwh.toFixed(2)} kWh × {b.rate.toFixed(4)} = {b.cost.toFixed(2)} KM
+              {b.kwh.toFixed(2)} kWh × {b.rate.toFixed(4)} = {b.activeEnergyCost.toFixed(2)} KM
             </span>
           </div>
         ))}
@@ -69,12 +73,17 @@ export function BillBreakdown({
         value={`${mjernoMjesto.toFixed(2)} KM`}
         excluded={isPartialObračun}
       />
-      <Row
-        label={`Obračunska snaga (${approved_kw} kW)`}
-        value={`${obracunskaSnaga.toFixed(2)} KM`}
-        excluded={isPartialObračun}
-      />
       <Row label="Aktivna energija" value={`${totalEnergy.toFixed(2)} KM`} />
+      <Row
+        label="Prenosna mrežarina"
+        value={`${totalTransmission.toFixed(2)} KM`}
+        hint={`${transmissionBaseCost.toFixed(2)} KM po kWh + ${(totalTransmission - transmissionBaseCost).toFixed(2)} KM po kW`}
+      />
+      <Row
+        label="Distributivna mrežarina"
+        value={`${totalDistribution.toFixed(2)} KM`}
+        hint={`${distributionBaseCost.toFixed(2)} KM po kWh + ${(totalDistribution - distributionBaseCost).toFixed(2)} KM po kW`}
+      />
       <Row label="Naknada OIE" value={`${totalOie.toFixed(2)} KM`} />
       {isPartialObračun ? (
         <div className="text-[11px] text-[var(--danger)] py-2 border-b border-[var(--surface-2)] italic">
@@ -104,12 +113,14 @@ export function BillBreakdown({
 function Row({
   label,
   value,
+  hint,
   muted,
   last,
   excluded,
 }: {
   label: string;
   value: string;
+  hint?: string;
   muted?: boolean;
   last?: boolean;
   excluded?: boolean;
@@ -120,24 +131,23 @@ function Row({
         last ? "border-b border-[var(--border)]" : "border-b border-[var(--surface-2)]"
       } ${muted ? "text-[var(--fg-dim)] text-xs" : ""}`}
     >
-      <span
-        className={
-          excluded ? "text-[var(--danger)]" : muted ? "" : "text-[var(--fg-mute)]"
-        }
-      >
+      <span className={excluded ? "text-[var(--danger)]" : muted ? "" : "text-[var(--fg-mute)]"}>
         {label}
       </span>
-      <span
-        className={
-          excluded
-            ? "text-[var(--danger)] font-semibold"
-            : muted
-              ? ""
-              : "font-semibold text-[var(--fg)]"
-        }
-      >
-        {value}
-      </span>
+      <div className="text-right">
+        <span
+          className={
+            excluded
+              ? "text-[var(--danger)] font-semibold"
+              : muted
+                ? ""
+                : "font-semibold text-[var(--fg)]"
+          }
+        >
+          {value}
+        </span>
+        {hint && <div className="text-[10px] text-[var(--fg-dim)] leading-tight mt-0.5">{hint}</div>}
+      </div>
     </div>
   );
 }

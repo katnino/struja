@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
-import { fetchBill, fetchMeter } from "@/lib/db";
+import { fetchBill, fetchMeter, fetchTariffRates } from "@/lib/db";
 import { BillBreakdown } from "@/components/BillBreakdown";
 import { PdfDownload } from "@/components/PdfDownload";
+import { summarizeBlocks } from "@/lib/tariff";
 
 export default async function BillDetailPage({
   params,
@@ -11,13 +12,29 @@ export default async function BillDetailPage({
   params: Promise<{ id: string; billId: string }>;
 }) {
   const { id, billId } = await params;
-  const [meter, bill] = await Promise.all([fetchMeter(id), fetchBill(billId)]);
+  const [meter, bill, rates] = await Promise.all([
+    fetchMeter(id),
+    fetchBill(billId),
+    fetchTariffRates(),
+  ]);
   if (!meter || !bill || bill.meter_id !== meter.id) notFound();
 
   const periodStart = new Date(bill.period_start);
   const periodEnd = new Date(bill.period_end);
   const daysInPeriod = Math.round((periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24));
   const isPartialObračun = daysInPeriod < 29;
+  const roundMoney = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
+  const summary = summarizeBlocks(bill.blocks);
+  const serviceFee = rates.serviceFee;
+  const transmissionBaseCost = summary.totalTransmission;
+  const distributionBaseCost = summary.totalDistribution;
+  const transmissionPowerFee = isPartialObračun ? 0 : Number(meter.approved_kw) * rates.powerFlatRate;
+  const distributionPowerFee = isPartialObračun ? 0 : Number(meter.approved_kw) * rates.powerKwRate;
+  const totalTransmission = roundMoney(transmissionBaseCost + transmissionPowerFee);
+  const totalDistribution = roundMoney(distributionBaseCost + distributionPowerFee);
+  const subtotal = roundMoney(serviceFee + summary.totalEnergy + totalTransmission + totalDistribution + summary.totalOie);
+  const vatAmount = roundMoney(subtotal * rates.vat);
+  const total = roundMoney(subtotal + vatAmount);
 
   return (
     <>
@@ -43,14 +60,16 @@ export default async function BillDetailPage({
           periodStart={bill.period_start}
           periodEnd={bill.period_end}
           blocks={bill.blocks}
-          approvedKw={Number(bill.approved_kw)}
-          mjernoMjesto={Number(bill.mjerno_mjesto)}
-          obracunskaSnaga={Number(bill.obracunska_snaga)}
-          totalEnergy={Number(bill.energy_cost)}
-          totalOie={Number(bill.oie_cost)}
-          subtotal={Number(bill.subtotal)}
-          vatAmount={Number(bill.vat_amount)}
-          total={Number(bill.total)}
+          mjernoMjesto={serviceFee}
+          totalEnergy={summary.totalEnergy}
+          transmissionBaseCost={transmissionBaseCost}
+          totalTransmission={totalTransmission}
+          distributionBaseCost={distributionBaseCost}
+          totalDistribution={totalDistribution}
+          totalOie={summary.totalOie}
+          subtotal={subtotal}
+          vatAmount={vatAmount}
+          total={total}
           consumptionKwh={Number(bill.consumption_kwh)}
           isPartialObračun={isPartialObračun}
         />
@@ -58,21 +77,23 @@ export default async function BillDetailPage({
         <div className="mt-4">
           <BillBreakdown
             blocks={bill.blocks}
-            approved_kw={Number(bill.approved_kw)}
-            mjernoMjesto={Number(bill.mjerno_mjesto)}
-            obracunskaSnaga={Number(bill.obracunska_snaga)}
-            totalEnergy={Number(bill.energy_cost)}
-            totalOie={Number(bill.oie_cost)}
-            subtotal={Number(bill.subtotal)}
-            vatAmount={Number(bill.vat_amount)}
-            total={Number(bill.total)}
+            mjernoMjesto={serviceFee}
+            totalEnergy={summary.totalEnergy}
+            transmissionBaseCost={transmissionBaseCost}
+            totalTransmission={totalTransmission}
+            distributionBaseCost={distributionBaseCost}
+            totalDistribution={totalDistribution}
+            totalOie={summary.totalOie}
+            subtotal={subtotal}
+            vatAmount={vatAmount}
+            total={total}
             consumptionKwh={Number(bill.consumption_kwh)}
             isPartialObračun={isPartialObračun}
           />
         </div>
 
         <div className="mt-6 text-[10px] text-[var(--fg-faint)] tracking-wider">
-          REERS odluka 15.12.2022 · primjena od 01.01.2023. · informativni obračun
+          REERS odluka 17.12.2024 · primjena od 01.06.2026. · informativni obračun
         </div>
       </main>
     </>

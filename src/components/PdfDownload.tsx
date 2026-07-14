@@ -7,10 +7,12 @@ export function PdfDownload({
   periodStart,
   periodEnd,
   blocks,
-  approvedKw,
   mjernoMjesto,
-  obracunskaSnaga,
   totalEnergy,
+  transmissionBaseCost,
+  totalTransmission,
+  distributionBaseCost,
+  totalDistribution,
   totalOie,
   subtotal,
   vatAmount,
@@ -22,10 +24,12 @@ export function PdfDownload({
   periodStart: string;
   periodEnd: string;
   blocks: BlockBreakdown[];
-  approvedKw: number;
   mjernoMjesto: number;
-  obracunskaSnaga: number;
   totalEnergy: number;
+  transmissionBaseCost: number;
+  totalTransmission: number;
+  distributionBaseCost: number;
+  totalDistribution: number;
   totalOie: number;
   subtotal: number;
   vatAmount: number;
@@ -90,7 +94,7 @@ export function PdfDownload({
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(10);
     for (const b of blocks) {
-      const costStr = `${b.cost.toFixed(2)} KM`;
+      const costStr = `${b.activeEnergyCost.toFixed(2)} KM`;
       pdf.text(`■ ${b.label}`, margin, y);
       pdf.text(
         `${b.kwh.toFixed(2)} kWh × ${b.rate.toFixed(4)} = ${costStr}`,
@@ -114,13 +118,27 @@ export function PdfDownload({
       false,
       isPartialObračun ? dangerColor : undefined,
     );
-    row(
-      `Obračunska snaga (${approvedKw} kW)`,
-      `${obracunskaSnaga.toFixed(2)} KM`,
-      false,
-      isPartialObračun ? dangerColor : undefined,
-    );
     row("Aktivna energija", `${totalEnergy.toFixed(2)} KM`);
+    row("Prenosna mrežarina", `${totalTransmission.toFixed(2)} KM`);
+    pdf.setFontSize(9);
+    pdf.setTextColor(110);
+    pdf.text(
+      `${transmissionBaseCost.toFixed(2)} KM po kWh + ${(totalTransmission - transmissionBaseCost).toFixed(2)} KM po kW`,
+      pageW + margin,
+      y - 1,
+      { align: "right" },
+    );
+    pdf.setTextColor(0);
+    row("Distributivna mrežarina", `${totalDistribution.toFixed(2)} KM`);
+    pdf.setFontSize(9);
+    pdf.setTextColor(110);
+    pdf.text(
+      `${distributionBaseCost.toFixed(2)} KM po kWh + ${(totalDistribution - distributionBaseCost).toFixed(2)} KM po kW`,
+      pageW + margin,
+      y - 1,
+      { align: "right" },
+    );
+    pdf.setTextColor(0);
     row("Naknada OIE", `${totalOie.toFixed(2)} KM`);
     if (isPartialObračun) {
       y += 1;
@@ -153,7 +171,7 @@ export function PdfDownload({
     pdf.setFontSize(8);
     pdf.setTextColor(180);
     pdf.text(
-      "REERS odluka 15.12.2022 · primjena od 01.01.2023. · informativni obračun",
+      "REERS odluka 17.12.2024 · primjena od 01.06.2026. · informativni obračun",
       margin,
       285,
     );

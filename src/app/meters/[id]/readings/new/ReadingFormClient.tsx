@@ -294,10 +294,12 @@ export function ReadingFormClient({
         {preview && (
           <BillBreakdown
             blocks={preview.blocks}
-            approved_kw={approvedKw}
             mjernoMjesto={preview.mjernoMjesto}
-            obracunskaSnaga={preview.obracunskaSnaga}
             totalEnergy={preview.totalEnergy}
+            transmissionBaseCost={preview.transmissionBaseCost}
+            totalTransmission={preview.totalTransmission}
+            distributionBaseCost={preview.distributionBaseCost}
+            totalDistribution={preview.totalDistribution}
             totalOie={preview.totalOie}
             subtotal={preview.subtotal}
             vatAmount={preview.vatAmount}

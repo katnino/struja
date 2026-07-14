@@ -10,8 +10,9 @@ create table if not exists public.tariff_rates (
   id                  integer primary key default 1,
   effective_from      date      not null,
   source_label        text      not null,
-  mjerno_mjesto       numeric(10,4) not null,
-  obracunska_snaga    numeric(10,4) not null,
+  service_fee         numeric(10,4) not null,
+  power_flat_rate     numeric(10,4) not null,
+  power_kw_rate       numeric(10,4) not null,
   oie_rate            numeric(10,6) not null,
   vat                 numeric(5,4)  not null,
   block_i             integer   not null,
@@ -25,25 +26,33 @@ create table if not exists public.tariff_rates (
   tg2_mt_i            numeric(10,4) not null,
   tg2_mt_ii           numeric(10,4) not null,
   tg2_mt_iii          numeric(10,4) not null,
+  transmission_vt     numeric(10,4) not null,
+  transmission_mt     numeric(10,4) not null,
+  distribution_vt     numeric(10,4) not null,
+  distribution_mt     numeric(10,4) not null,
   created_at          timestamptz default now(),
   constraint single_row check (id = 1)
 );
 
--- Seed current REERS (Odluka 15.12.2022, primjena od 01.01.2023.)
+-- Seed current REERS (Odluka 17.12.2024, primjena od 01.06.2026.)
 insert into public.tariff_rates (
   id, effective_from, source_label,
-  mjerno_mjesto, obracunska_snaga, oie_rate, vat,
+  service_fee, power_flat_rate, power_kw_rate, oie_rate, vat,
   block_i, block_ii,
   tg1_i, tg1_ii, tg1_iii,
   tg2_vt_i, tg2_vt_ii, tg2_vt_iii,
-  tg2_mt_i, tg2_mt_ii, tg2_mt_iii
+  tg2_mt_i, tg2_mt_ii, tg2_mt_iii,
+  transmission_vt, transmission_mt,
+  distribution_vt, distribution_mt
 ) values (
-  1, '2023-01-01', 'REERS Odluka 15.12.2022',
-  2.48, 3.1668, 0.0007, 0.17,
+  1, '2026-06-01', 'REERS Odluka 17.12.2024',
+  2.48, 0.2467, 3.2425, 0.0007, 0.17,
   500, 1500,
   0.1053, 0.1423, 0.2522,
-  0.1324, 0.1770, 0.3094,
-  0.0663, 0.0886, 0.1548
+  0.0813, 0.1277, 0.2425,
+  0.0406, 0.0638, 0.1212,
+  0.0120, 0.0060,
+  0.0673, 0.0337
 ) on conflict (id) do nothing;
 
 -- 2. meters ----------------------------------------------------------------
