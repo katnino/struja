@@ -10,6 +10,8 @@ Postupak:
 3. Svaki mjesec unesi novo očitanje (sliku) i aplikacija automatski računa potrošnju i izdaje račun naspram predhodnog stanja.
 4. Pregled istorije računa po brojilu.
 5. Algoritam procijene potrošnje.
+6. Moguće je pratiti više mjernih mjesta, ili imati više varijanti jednog mjernog mjesta
+7. Izvod mjerenja u PDF formatu
 
 - AI: Google Gemini. Svaki korisnik unosi svoj besplatni ključ koji može da preuzme preko direktnog linka u aplikaciji.
 
