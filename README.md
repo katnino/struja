@@ -4,7 +4,7 @@ Aplikacija za individualni obračun utroška električne energije, izračun pros
 
 Postupak:
 
-1. Prijavi se / sign in
+1. Prijavi se / sign in https://www.struja-aplikacija.vercel.app
 2. Dodaj jedno ili više brojila
 3. Svaki mjesec unesi novo očitanje (sliku) i aplikacija automatski računa potrošnju i izdaje račun naspram predhodnog stanja.
 4. Pregled istorije računa po brojilu.
