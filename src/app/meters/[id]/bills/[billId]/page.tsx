@@ -32,7 +32,8 @@ export default async function BillDetailPage({
   const distributionPowerFee = isPartialObračun ? 0 : Number(meter.approved_kw) * rates.powerKwRate;
   const totalTransmission = roundMoney(transmissionBaseCost + transmissionPowerFee);
   const totalDistribution = roundMoney(distributionBaseCost + distributionPowerFee);
-  const subtotal = roundMoney(serviceFee + summary.totalEnergy + totalTransmission + totalDistribution + summary.totalOie);
+  const includedServiceFee = isPartialObračun ? 0 : serviceFee;
+  const subtotal = roundMoney(includedServiceFee + summary.totalEnergy + totalTransmission + totalDistribution + summary.totalOie);
   const vatAmount = roundMoney(subtotal * rates.vat);
   const total = roundMoney(subtotal + vatAmount);
 
