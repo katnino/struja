@@ -1,7 +1,13 @@
 import Link from "next/link";
+import { Inter } from "next/font/google";
 import { signOutAction } from "@/app/actions/auth";
 import { getAuthUser } from "@/lib/db";
 import { HeaderSettings } from "./HeaderSettings";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default async function Header() {
   const user = await getAuthUser();
@@ -10,7 +16,9 @@ export default async function Header() {
       <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl">⚡</span>
-          <span className="font-bold tracking-wider text-[var(--fg-strong)]">
+          <span
+            className={`${inter.className} font-bold tracking-wider text-[var(--fg-strong)]`}
+          >
             Struja
           </span>
         </Link>
