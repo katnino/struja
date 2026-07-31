@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Inter } from "next/font/google";
+import { Great_Vibes } from "next/font/google";
 import { signOutAction } from "@/app/actions/auth";
 import { getAuthUser } from "@/lib/db";
 import { HeaderSettings } from "./HeaderSettings";
 
-const inter = Inter({
+const greatVibes = Great_Vibes({
+  weight: "400",
   subsets: ["latin"],
   display: "swap",
 });
@@ -17,7 +18,7 @@ export default async function Header() {
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl">⚡</span>
           <span
-            className={`${inter.className} font-bold tracking-wider text-[var(--fg-strong)]`}
+            className={`${greatVibes.className} text-[var(--fg-strong)]`}
           >
             Struja
           </span>
