@@ -100,7 +100,7 @@ Svi definisani unit testovi u projektu su provjereni i prolaze u potpunosti:
 
 ## Napomena
 
-Aplikacija je u beta fazi tj. ranom razvoju i moguće su neželjene promjene. Slike se ne čuvaju. 
+Aplikacija je invite only, samo uz pozivnicu i u beta fazi tj. ranom razvoju i moguće su neželjene promjene. Slike se ne čuvaju. 
 
 ## Licenca
 
