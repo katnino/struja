@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { signUpAction } from "@/app/actions/auth";
+import { Great_Vibes } from "next/font/google";
+
+const greatVibes = Great_Vibes({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export const metadata = { title: "Registracija – Struja" };
 
@@ -14,7 +21,7 @@ export default async function SignupPage({
       <div className="max-w-sm mx-auto">
         <div className="text-center mb-8">
           <div className="text-3xl mb-2">⚡</div>
-          <h1 className="text-xl font-bold tracking-wider text-[var(--fg-strong)]">
+          <h1 className={`${greatVibes.className} text-2xl text-[var(--fg-strong)]`}>
             Struja
           </h1>
           <p className="text-xs text-[var(--fg-dim)] mt-1 uppercase tracking-widest">
