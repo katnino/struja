@@ -18,7 +18,7 @@ export default async function Header() {
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl">⚡</span>
           <span
-            className={`${greatVibes.className} text-[var(--fg-strong)]`}
+            className={`${greatVibes.className} text-2xl text-[var(--fg-strong)]`}
           >
             Struja
           </span>
