@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { signInAction } from "@/app/actions/auth";
 
 export const metadata = { title: "Prijava – Struja" };
@@ -70,12 +69,6 @@ export default async function LoginPage({
           >
             Prijava
           </button>
-          <p className="text-xs text-center text-[var(--fg-dim)]">
-            Nemaš račun?{" "}
-            <Link href="/signup" className="text-[var(--accent-strong)] hover:underline">
-              Registruj se
-            </Link>
-          </p>
         </form>
       </div>
     </main>
